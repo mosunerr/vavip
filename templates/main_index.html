@@ -1,0 +1,226 @@
+{% extends "layout.html" %}
+{% block title %}Главная страница Vavip{% endblock %}
+{% block content %}
+<style>
+  .video-background {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    z-index: -1;
+    background: black;
+  }
+  .video-background video {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    min-width: 100%;
+    min-height: 100%;
+    width: auto;
+    height: auto;
+    transform: translate(-50%, -50%) scale(1);
+    object-fit: cover;
+    transition: transform 1s ease;
+    opacity: 1 !important;
+    will-change: transform;
+  }
+  main.content {
+    position: relative;
+    z-index: 1;
+    margin-top: 20px;
+    max-width: 1200px;
+    padding: 0 20px;
+    color: white;
+  }
+  .section-link {
+    font-size: 2.5rem;
+    color: #c0c0c0; /* Цвет совпадает с номером телефона */
+    text-decoration: none;
+    padding: 5px 50px;
+    border-radius: 200px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+  .section-link:hover {
+    background-color: #2600ff8d;
+    color: #e66fef;
+  }
+  .content-section {
+    display: none;
+    margin-top: 40px;
+  }
+  .content-section.active {
+    display: block;
+  }
+  .spacer {
+    height: 1500px;
+  }
+  .centered-link-wrapper {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 2;
+    pointer-events: auto;
+  }
+  /* Контейнер для регулировки */
+  .control-panel {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    background: rgba(0,0,0,0.6);
+    padding: 10px 15px;
+    border-radius: 10px;
+    color: white;
+    font-size: 14px;
+    max-width: 320px;
+    z-index: 10;
+  }
+  .control-panel label {
+    display: block;
+    margin-bottom: 8px;
+  }
+  .control-panel input[type="range"] {
+    width: 100%;
+  }
+  @media(max-width: 768px) {
+    .video-background video {
+      transition: transform 1s ease;
+      min-width: 100vw;
+      min-height: 56.25vw;
+      transform: translate(-50%, -50%) scale(1);
+    }
+    main.content {
+      margin-top: 70px;
+      max-width: 100%;
+      padding: 0 10px;
+      font-size: 1.1rem;
+    }
+    .section-link {
+      font-size: 1.5rem;
+      padding: 5px 20px;
+    }
+  }
+</style>
+
+<div class="video-background">
+  <video autoplay muted loop playsinline preload="auto" id="bg-video" poster="{{ url_for('static', filename='images/video-poster.jpg') }}">
+    <source src="{{ url_for('static', filename='videos/background1.mp4') }}" type="video/mp4" />
+    Ваш браузер не поддерживает видео.
+  </video>
+</div>
+
+<div class="centered-link-wrapper" id="centeredLink">
+  <a href="{{ url_for('catalog') }}" class="section-link" id="catalog-link">Инженерные системы Vavip</a>
+</div>
+
+<!-- Панель регулировки -->
+<div class="control-panel">
+  <label for="topRange">Вертикальное положение (top %): <span id="topValue">50%</span></label>
+  <input type="range" id="topRange" min="0" max="100" value="50" />
+  
+  <label for="leftRange">Горизонтальное положение (left %): <span id="leftValue">50%</span></label>
+  <input type="range" id="leftRange" min="0" max="100" value="50" />
+</div>
+
+<main class="content">
+  <div id="sections">
+    <div class="content-section active" data-index="0">
+      <p>Содержимое для первого видео</p>
+    </div>
+    <div class="content-section" data-index="1">
+      <p>Содержимое для второго видео</p>
+    </div>
+    <div class="content-section" data-index="2">
+      <p>Саныч всегда прав!!!</p>
+    </div>
+  </div>
+
+  <div class="spacer"></div>
+</main>
+
+<script>
+  const videos = [
+    "{{ url_for('static', filename='videos/background1.mp4') }}",
+    "{{ url_for('static', filename='videos/background2.mp4') }}",
+    "{{ url_for('static', filename='videos/background3.mp4') }}"
+  ];
+  const videoElement = document.getElementById('bg-video');
+  const contentSections = document.querySelectorAll('.content-section');
+  let currentVideoIndex = 0;
+
+  async function changeVideoIndex(index) {
+    if(index === currentVideoIndex) return;
+
+    videoElement.pause();
+    videoElement.src = videos[index];
+    videoElement.load();
+
+    await videoElement.play().catch(e => console.error('Video play error:', e));
+
+    if(index === 2) {
+      videoElement.style.transition = "transform 1s ease";
+      videoElement.style.transform = "translate(-50%, -50%) scale(0.5)";
+    } else {
+      videoElement.style.transition = "transform 1s ease";
+      videoElement.style.transform = "translate(-50%, -50%) scale(1)";
+    }
+
+    contentSections.forEach(section => {
+      section.classList.toggle('active', Number(section.dataset.index) === index);
+    });
+
+    currentVideoIndex = index;
+  }
+
+  function debounce(func, wait = 400) {
+    let timeout;
+    return function(...args) {
+      clearTimeout(timeout);
+      timeout = setTimeout(() => func.apply(this, args), wait);
+    };
+  }
+
+  const onScrollDebounced = debounce(() => {
+    const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+    const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+    const scrollPercent = (scrollTop / docHeight) * 100;
+    if(scrollPercent < 33) {
+      changeVideoIndex(0);
+    } else if(scrollPercent < 67) {
+      changeVideoIndex(1);
+    } else {
+      changeVideoIndex(2);
+    }
+  }, 400);
+
+  window.addEventListener('scroll', onScrollDebounced);
+
+  window.onload = () => {
+    currentVideoIndex = 0;
+    contentSections.forEach(section => {
+      section.classList.toggle('active', Number(section.dataset.index) === 0);
+    });
+  }
+
+  // Скрипт для управления положением
+  const centeredLink = document.getElementById('centeredLink');
+  const topRange = document.getElementById('topRange');
+  const leftRange = document.getElementById('leftRange');
+  const topValue = document.getElementById('topValue');
+  const leftValue = document.getElementById('leftValue');
+
+  topRange.addEventListener('input', () => {
+    const topPct = topRange.value + '%';
+    centeredLink.style.top = topPct;
+    topValue.textContent = topPct;
+  });
+
+  leftRange.addEventListener('input', () => {
+    const leftPct = leftRange.value + '%';
+    centeredLink.style.left = leftPct;
+    leftValue.textContent = leftPct;
+  });
+</script>
+{% endblock %}

@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <title>Сравнение узлов - Vavip</title>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      background-color: black;
+      color: white;
+      font-family: Arial, sans-serif;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      box-sizing: border-box;
+      background-image: linear-gradient(45deg, #1b1b1b, #262626);
+    }
+    body {
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+    .page-content {
+      flex: 1;
+      width: 100%;
+      padding: 20px;
+      box-sizing: border-box;
+      text-align: center;
+    }
+    .header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    .header img {
+      height: 168px;
+      width: auto;
+      margin: 0 auto 10px;
+      display: block;
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      table-layout: fixed;
+      background-color: #222;
+      word-wrap: break-word;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    th, td {
+      padding: 15px;
+      border: 1px solid #444;
+      vertical-align: top;
+      text-align: center;
+      word-wrap: break-word;
+      box-sizing: border-box;
+      background-color: transparent;
+    }
+    th {
+      background-color: transparent;
+      border: none;
+      padding: 0;
+    }
+    /* Здесь около строки 70-100 правим стиль glass-header */
+    .glass-header {
+      background: rgba(255, 255, 255, 0.0.1);  /* более прозрачный фон */
+      box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.9); /* более легкая тень */
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      border-radius: 12px;
+      padding: 15px 10px;
+      font-weight: bold;
+      font-size: 1.3em;
+      color: white;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      user-select: none;
+    }
+    img {
+      width: 168px;
+      height: auto;
+      border-radius: 10px;
+    }
+    video {
+      width: 200px;
+      border-radius: 6px;
+    }
+    button.remove-from-compare {
+      display: block;
+      margin: 10px auto 0 auto;
+      background-color: black;
+      border: 2px solid white;
+      color: white;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 1em;
+      font-weight: 600;
+      width: 160px;
+      min-height: 40px;
+      line-height: 1.2;
+      padding: 8px 10px;
+      white-space: normal;
+      word-break: break-word;
+      overflow-wrap: break-word;
+      text-align: center;
+      box-sizing: border-box;
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
+    button.remove-from-compare:hover {
+      background-color: white;
+      color: black;
+    }
+    .back-link {
+      display: block;
+      text-align: center;
+      margin: 20px auto;
+      font-size: 1.1em;
+      color: #d64161;
+      text-decoration: none;
+      width: fit-content;
+    }
+    #footer-container {
+      width: 100%;
+      background-color: #111;
+      box-sizing: border-box;
+      flex-shrink: 0;
+    }
+    .main_footer_inner {
+      display: flex;
+      justify-content: space-between;
+      padding: 20px 40px;
+      font-family: Arial, sans-serif;
+      box-sizing: border-box;
+      color: white;
+      font-size: 0.85em;
+      gap: 10px;
+    }
+    .main_footer_inner .col {
+      flex: 1;
+      padding: 0 10px;
+    }
+    .footer-left {
+      text-align: left;
+    }
+    .footer-center {
+      text-align: center;
+    }
+    .footer-right {
+      text-align: right;
+    }
+    .main_footer_inner a {
+      color: white;
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="page-content">
+    <div class="header">
+      <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Логотип Vavip" />
+    </div>
+    <h1>Сравнение выбранных узлов</h1>
+    <table>
+      <tr>
+        <th><div class="glass-header">Название</div></th>
+        {% for unit in units %}
+        <td>
+          {{ unit.title }}
+          <br />
+          <button class="remove-from-compare" data-unit-id="{{ unit.id }}">Удалить из сравнения</button>
+        </td>
+        {% endfor %}
+      </tr>
+      <tr>
+        <th><div class="glass-header">Фото</div></th>
+        {% for unit in units %}
+        <td><img src="{{ url_for('static', filename='images/' + unit.detail_image) }}" alt="{{ unit.title }}" /></td>
+        {% endfor %}
+      </tr>
+      <tr>
+        <th><div class="glass-header">Видео</div></th>
+        {% for unit in units %}
+        <td>
+          {% if unit.video %}
+          <video controls>
+            <source src="{{ url_for('static', filename='videos/' + unit.video) }}" type="video/mp4" />
+            Ваш браузер не поддерживает видео.
+          </video>
+          {% else %}
+          Нет видео
+          {% endif %}
+        </td>
+        {% endfor %}
+      </tr>
+      <tr>
+        <th><div class="glass-header">Описание</div></th>
+        {% for unit in units %}
+        <td>{{ unit.description }}</td>
+        {% endfor %}
+      </tr>
+    </table>
+    <a href="{{ url_for('home') }}" class="back-link">← Вернуться на главную</a>
+  </div>
+  <div id="footer-container"></div>
+  <script>
+    document.querySelectorAll('.remove-from-compare').forEach(button => {
+      button.addEventListener('click', () => {
+        const unitIdToRemove = button.getAttribute('data-unit-id');
+        const urlParams = new URLSearchParams(window.location.search);
+        const units = urlParams.getAll('units');
+        const filtered = units.filter(id => id !== unitIdToRemove);
+        if (filtered.length < 2) {
+          alert('Для сравнения должно оставаться минимум 2 узла');
+          return;
+        }
+        const currentUrl = new URL(window.location.href);
+        currentUrl.searchParams.delete('units');
+        filtered.forEach(id => currentUrl.searchParams.append('units', id));
+        window.location.href = currentUrl.toString();
+      });
+    });
+    fetch('/static/footer.html')
+      .then(response => response.text())
+      .then(data => {
+        const container = document.getElementById('footer-container');
+        container.innerHTML = data;
+        const footerDiv = container.querySelector('div');
+        if (footerDiv) footerDiv.classList.add('main_footer_inner');
+      })
+      .catch(err => console.error('Ошибка загрузки футера:', err));
+  </script>
+</body>
+</html>

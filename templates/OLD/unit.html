@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <title>{{ unit.title }} - Vavip</title>
+  <style>
+    html, body {
+      margin: 0; padding: 0; width: 100%; background-color: black; color: white;
+      font-family: Arial, sans-serif;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    body {
+      flex-direction: column;
+      min-height: 100vh;
+    }
+    .page-content {
+      flex: 1;
+      max-width: 1200px;
+      width: 100%;
+      padding: 20px;
+      box-sizing: border-box;
+    }
+    .header {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .header img {
+      height: 168px;
+      vertical-align: middle;
+    }
+    /* Основной контейнер - три колонки: фотогалерея, большое фото, описание */
+    .content-container {
+      display: flex;
+      gap: 40px;
+      justify-content: flex-start;
+      align-items: flex-start;
+      max-width: 1200px;
+    }
+    /* Левая часть - вертикальная галерея маленьких фото, высота равна большому фото */
+    .photo-gallery {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      max-height: 400px; /* высота большого фото */
+      overflow-y: auto;
+      width: 200px; /* увеличена ширина */
+      box-sizing: border-box;
+    }
+    .photo-item {
+      text-align: center;
+      cursor: pointer;
+      flex: 1 1 23%; /* примерно 1/4 высоты */
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    .photo-item img {
+      height: 75px; /* ещё немного уменьшен размер */
+      width: auto;
+      border-radius: 6px;
+      margin: 0 auto;
+      transition: transform 0.3s ease;
+    }
+    .photo-item img:hover {
+      transform: scale(1.1);
+    }
+    .photo-item p {
+      margin-top: 5px;
+      font-size: 0.8em;
+      color: #ccc;
+      line-height: 1.1em;
+    }
+    /* Средняя колонка - основное фото */
+    .main-photo {
+      width: auto;
+      max-height: 400px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: transform 0.3s ease;
+      flex-shrink: 0;
+    }
+    .main-photo.enlarged {
+      transform: scale(1.5);
+    }
+    /* Правая колонка с описанием */
+    .description {
+      max-height: 400px;
+      overflow-y: auto;
+      color: white;
+      max-width: 460px; /* чуть шире */
+      font-size: 1.1em;
+      line-height: 1.4em;
+      padding-left: 30px;
+      box-sizing: border-box;
+      flex-shrink: 0;
+      white-space: pre-wrap;
+    }
+#footer-container {
+  width: 100%;
+  background-color: #111;
+  box-sizing: border-box;
+  flex-shrink: 0;
+  margin-top: 40px;
+}
+.main_footer_inner {
+  display: flex;
+  justify-content: space-between;
+  padding: 20px 40px;
+  font-family: Arial, sans-serif;
+  box-sizing: border-box;
+  color: white;
+  font-size: 0.85em;
+  gap: 10px;
+}
+.main_footer_inner .col {
+  flex: 1;
+  padding: 0 10px;
+}
+.footer-left {
+  text-align: left;
+}
+.footer-center {
+  text-align: center;
+}
+.footer-right {
+  text-align: right;
+}
+.main_footer_inner a {
+  color: white;
+  text-decoration: none;
+}
+  </style>
+</head>
+<body>
+  <div class="page-content">
+    <div class="header">
+      <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Логотип Vavip" />
+      <h1>{{ unit.title }}</h1>
+    </div>
+    <div class="content-container">
+      <div class="photo-gallery">
+        {% for photo in unit.photos %}
+        <div class="photo-item" onclick="changeMainPhoto('{{ url_for('static', filename='images/' + photo.filename) }}')">
+          <img src="{{ url_for('static', filename='images/' + photo.filename) }}" alt="{{ photo.description }}" />
+          <p>{{ photo.description }}</p>
+        </div>
+        {% endfor %}
+      </div>
+      <img id="main-photo" class="main-photo" src="{{ url_for('static', filename='images/' + unit.detail_image) }}" alt="{{ unit.title }}" onclick="toggleEnlarge()" />
+      <div class="description">{{ unit.description }}</div>
+    </div>
+  </div>
+
+  <div id="footer-container"></div>
+  <script>
+    function toggleEnlarge() {
+      const img = document.getElementById('main-photo');
+      img.classList.toggle('enlarged');
+    }
+
+    function changeMainPhoto(newSrc) {
+      const mainPhoto = document.getElementById('main-photo');
+      mainPhoto.src = newSrc;
+      mainPhoto.classList.remove('enlarged');
+    }
+
+    fetch('/static/footer.html')
+      .then(response => response.text())
+      .then(data => {
+        const container = document.getElementById('footer-container');
+        container.innerHTML = data;
+        const footerDiv = container.querySelector('div');
+        if (footerDiv) footerDiv.classList.add('main_footer_inner');
+      })
+      .catch(err => console.error('Ошибка загрузки футера:', err));
+  </script>
+</body>
+</html>
