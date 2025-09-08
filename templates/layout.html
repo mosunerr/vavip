@@ -4,7 +4,6 @@
   <meta charset="UTF-8" />
   <title>{% block title %}Vavip{% endblock %}</title>
   <style>
-    /* Основные стили как раньше */
     html, body {
       margin: 0; padding: 0; height: 100%;
       background-color: black; color: white;
@@ -23,7 +22,6 @@
       box-sizing: border-box;
       position: fixed; top: 0; left: 0; width: 100%;
       z-index: 1000;
-      background-color: rgba(0, 0, 0, 0.3);
       transition: background-color 0.4s ease;
     }
     header:hover {
@@ -40,14 +38,14 @@
       flex: 1;
       display: flex;
       align-items: center;
-      gap: 30px;
     }
     .header-left {
       justify-content: flex-start;
+      gap: 15px;
     }
     .header-right {
       justify-content: flex-end;
-      gap: 40px;
+      gap: 30px;
     }
     .location-icon {
       width: 22px; height: 22px;
@@ -65,8 +63,6 @@
       font-size: 0.95rem;
       text-decoration: none;
       user-select: text;
-      padding-right: 0.6em;
-      letter-spacing: 0.01em;
       cursor: pointer;
       transition: color 0.3s ease;
     }
@@ -113,9 +109,11 @@
     }
     .header-bottom {
       display: flex;
-      justify-content: space-between;
+      justify-content: center;
       align-items: center;
-      padding: 8px 60px;
+      flex-wrap: wrap;
+      padding: 8px 40px; /* уменьшили горизонтальные отступы */
+      gap: 8px; /* небольшой промежуток между пунктами */
       font-family: Helvetica, Arial, sans-serif;
       font-weight: 300;
       font-size: 0.95rem;
@@ -144,7 +142,6 @@
       left: 0;
       height: 2px;
       width: 0;
-      /* Градиент для широкой полоски с затуханием на концах */
       background: linear-gradient(to right, transparent, #999999 50%, transparent);
       transition: width 1.5s ease;
     }
@@ -290,16 +287,13 @@
   </div>
 </header>
 
-
 <main>
   {% block content %}{% endblock %}
 </main>
 
-
 <footer>
   © 2025 Vavip
 </footer>
-
 
 </body>
 </html>

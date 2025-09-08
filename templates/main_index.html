@@ -33,19 +33,6 @@
     padding: 0 20px;
     color: white;
   }
-  .section-link {
-    font-size: 2.5rem;
-    color: #c0c0c0; /* Цвет совпадает с номером телефона */
-    text-decoration: none;
-    padding: 5px 50px;
-    border-radius: 200px;
-    cursor: pointer;
-    transition: background-color 0.3s ease, color 0.3s ease;
-  }
-  .section-link:hover {
-    background-color: #2600ff8d;
-    color: #e66fef;
-  }
   .content-section {
     display: none;
     margin-top: 40px;
@@ -58,49 +45,78 @@
   }
   .centered-link-wrapper {
     position: fixed;
-    top: 50%;
+    bottom: 60px;
     left: 50%;
-    transform: translate(-50%, -50%);
+    transform: translateX(-50%);
     z-index: 2;
     pointer-events: auto;
+    text-align: center;
   }
-  /* Контейнер для регулировки */
+  .section-link {
+    font-family: 'Helvetica', 'Arial', sans-serif;
+    font-weight: 300;
+    font-size: 1.8rem;
+    color: #c0c0c0;
+    text-decoration: none;
+    padding: 5px 40px;
+    border-radius: 200px;
+    cursor: pointer;
+    transition: all 0.5s ease;
+    letter-spacing: 1.5px;
+  }
+  .section-link:hover {
+    background-color: #2600ff8d;
+    color: #e66fef;
+  }
+
+  /* Панель управления */
   .control-panel {
     position: fixed;
     bottom: 20px;
     left: 20px;
-    background: rgba(0,0,0,0.6);
-    padding: 10px 15px;
+    background: linear-gradient(135deg, #1f1f1f, #3a3a3a);
+    padding: 15px;
     border-radius: 10px;
     color: white;
     font-size: 14px;
-    max-width: 320px;
-    z-index: 10;
+    max-width: 340px;
+    z-index: 50;
+    pointer-events: auto;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.6);
+    transition: max-height 0.4s ease, padding 0.4s ease;
+    overflow: hidden;
+    max-height: 500px; /* развернуто */
   }
+
+  .control-panel.collapsed {
+    max-height: 40px; /* свернуто в одну строку */
+    padding: 5px 15px;
+  }
+
   .control-panel label {
     display: block;
-    margin-bottom: 8px;
+    margin-bottom: 6px;
   }
-  .control-panel input[type="range"] {
+  .control-panel input[type="range"], .control-panel select, .control-panel input[type="color"] {
     width: 100%;
+    margin-bottom: 15px;
+    pointer-events: auto;
+    padding: 3px 6px;
+    border-radius: 5px;
+    border: none;
+    background: #2a2a2a;
+    color: white;
   }
-  @media(max-width: 768px) {
-    .video-background video {
-      transition: transform 1s ease;
-      min-width: 100vw;
-      min-height: 56.25vw;
-      transform: translate(-50%, -50%) scale(1);
-    }
-    main.content {
-      margin-top: 70px;
-      max-width: 100%;
-      padding: 0 10px;
-      font-size: 1.1rem;
-    }
-    .section-link {
-      font-size: 1.5rem;
-      padding: 5px 20px;
-    }
+
+  .toggle-btn {
+    background: #2600ff;
+    color: white;
+    border: none;
+    padding: 4px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-bottom: 10px;
+    font-weight: 600;
   }
 </style>
 
@@ -112,16 +128,7 @@
 </div>
 
 <div class="centered-link-wrapper" id="centeredLink">
-  <a href="{{ url_for('catalog') }}" class="section-link" id="catalog-link">Инженерные системы Vavip</a>
-</div>
-
-<!-- Панель регулировки -->
-<div class="control-panel">
-  <label for="topRange">Вертикальное положение (top %): <span id="topValue">50%</span></label>
-  <input type="range" id="topRange" min="0" max="100" value="50" />
-  
-  <label for="leftRange">Горизонтальное положение (left %): <span id="leftValue">50%</span></label>
-  <input type="range" id="leftRange" min="0" max="100" value="50" />
+  <a href="{{ url_for('catalog') }}" class="section-link" id="catalog-link">САНТЕХНИЧЕСКИЕ УЗЛЫ ВВОДА VAVIP</a>
 </div>
 
 <main class="content">
@@ -136,9 +143,41 @@
       <p>Саныч всегда прав!!!</p>
     </div>
   </div>
-
   <div class="spacer"></div>
 </main>
+
+<div class="control-panel" id="controlPanel">
+  <button class="toggle-btn" id="togglePanel">Развернуть / Свернуть</button>
+
+  <label for="topRange">Вертикальное положение (bottom %): <span id="topValue">60</span></label>
+  <input type="range" id="topRange" min="0" max="100" value="60">
+  
+  <label for="leftRange">Горизонтальное положение (left %): <span id="leftValue">50%</span></label>
+  <input type="range" id="leftRange" min="0" max="100" value="50">
+  
+  <label for="weightRange">Вес шрифта (font-weight): <span id="weightValue">300</span></label>
+  <input type="range" id="weightRange" min="100" max="900" step="100" value="300">
+  
+  <label for="sizeRange">Размер шрифта (px): <span id="sizeValue">28</span></label>
+  <input type="range" id="sizeRange" min="16" max="60" value="28">
+
+  <label for="fontSelect">Шрифт:</label>
+  <select id="fontSelect">
+    <option value="Helvetica, Arial, sans-serif" selected>Helvetica</option>
+    <option value="'Arial', sans-serif">Arial</option>
+    <option value="'Times New Roman', serif">Times New Roman</option>
+    <option value="'Courier New', monospace">Courier New</option>
+    <option value="'Verdana', sans-serif">Verdana</option>
+    <option value="'Futura', sans-serif">Futura</option>
+    <option value="'Gill Sans', sans-serif">Gill Sans</option>
+    <option value="'Trebuchet MS', sans-serif">Trebuchet MS</option>
+    <option value="'Roboto', sans-serif">Roboto</option>
+    <option value="'Open Sans', sans-serif">Open Sans</option>
+  </select>
+
+  <label for="colorPicker">Цвет текста:</label>
+  <input type="color" id="colorPicker" value="#c0c0c0">
+</div>
 
 <script>
   const videos = [
@@ -152,25 +191,17 @@
 
   async function changeVideoIndex(index) {
     if(index === currentVideoIndex) return;
-
     videoElement.pause();
     videoElement.src = videos[index];
     videoElement.load();
-
     await videoElement.play().catch(e => console.error('Video play error:', e));
 
-    if(index === 2) {
-      videoElement.style.transition = "transform 1s ease";
-      videoElement.style.transform = "translate(-50%, -50%) scale(0.5)";
-    } else {
-      videoElement.style.transition = "transform 1s ease";
-      videoElement.style.transform = "translate(-50%, -50%) scale(1)";
-    }
+    videoElement.style.transition = "transform 1s ease";
+    videoElement.style.transform = index === 2 ? "translate(-50%, -50%) scale(0.5)" : "translate(-50%, -50%) scale(1)";
 
     contentSections.forEach(section => {
       section.classList.toggle('active', Number(section.dataset.index) === index);
     });
-
     currentVideoIndex = index;
   }
 
@@ -186,41 +217,60 @@
     const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
     const docHeight = document.documentElement.scrollHeight - window.innerHeight;
     const scrollPercent = (scrollTop / docHeight) * 100;
-    if(scrollPercent < 33) {
-      changeVideoIndex(0);
-    } else if(scrollPercent < 67) {
-      changeVideoIndex(1);
-    } else {
-      changeVideoIndex(2);
-    }
+    if(scrollPercent < 33) changeVideoIndex(0);
+    else if(scrollPercent < 67) changeVideoIndex(1);
+    else changeVideoIndex(2);
   }, 400);
-
   window.addEventListener('scroll', onScrollDebounced);
 
   window.onload = () => {
-    currentVideoIndex = 0;
     contentSections.forEach(section => {
       section.classList.toggle('active', Number(section.dataset.index) === 0);
     });
   }
 
-  // Скрипт для управления положением
   const centeredLink = document.getElementById('centeredLink');
+  const link = document.getElementById('catalog-link');
+
   const topRange = document.getElementById('topRange');
   const leftRange = document.getElementById('leftRange');
+  const weightRange = document.getElementById('weightRange');
+  const sizeRange = document.getElementById('sizeRange');
+  const fontSelect = document.getElementById('fontSelect');
+  const colorPicker = document.getElementById('colorPicker');
   const topValue = document.getElementById('topValue');
   const leftValue = document.getElementById('leftValue');
+  const weightValue = document.getElementById('weightValue');
+  const sizeValue = document.getElementById('sizeValue');
 
   topRange.addEventListener('input', () => {
-    const topPct = topRange.value + '%';
-    centeredLink.style.top = topPct;
-    topValue.textContent = topPct;
+    centeredLink.style.bottom = topRange.value + '%';
+    topValue.textContent = topRange.value;
+  });
+  leftRange.addEventListener('input', () => {
+    centeredLink.style.left = leftRange.value + '%';
+    leftValue.textContent = leftRange.value + '%';
+  });
+  weightRange.addEventListener('input', () => {
+    link.style.fontWeight = weightRange.value;
+    weightValue.textContent = weightRange.value;
+  });
+  sizeRange.addEventListener('input', () => {
+    link.style.fontSize = sizeRange.value + 'px';
+    sizeValue.textContent = sizeRange.value;
+  });
+  fontSelect.addEventListener('change', () => {
+    link.style.fontFamily = fontSelect.value;
+  });
+  colorPicker.addEventListener('input', () => {
+    link.style.color = colorPicker.value;
   });
 
-  leftRange.addEventListener('input', () => {
-    const leftPct = leftRange.value + '%';
-    centeredLink.style.left = leftPct;
-    leftValue.textContent = leftPct;
+  // Свернуть / развернуть панель
+  const controlPanel = document.getElementById('controlPanel');
+  const toggleBtn = document.getElementById('togglePanel');
+  toggleBtn.addEventListener('click', () => {
+    controlPanel.classList.toggle('collapsed');
   });
 </script>
 {% endblock %}
