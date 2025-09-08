@@ -118,5 +118,5 @@ def compare():
     return render_template('compare.html', units=selected_units)
 
 if __name__ == '__main__':
-    # app.run(debug=True)  # Локальная отладка, на сервере не нужно
-    pass
+    app.run(host='0.0.0.0', port=5000)
+
