@@ -2,15 +2,17 @@
 {% block title %}Главная страница Vavip{% endblock %}
 {% block content %}
 <style>
+  /* Видео и фон */
   .video-background {
     position: fixed;
-    top: 0; left: 0;
+    top: 0;
+    left: 0;
     width: 100vw;
     height: 100vh;
     overflow: hidden;
-    z-index: -1;
-    background: black;
+    z-index: 1;
   }
+
   .video-background video {
     position: absolute;
     top: 50%;
@@ -19,20 +21,31 @@
     min-height: 100%;
     width: auto;
     height: auto;
-    transform: translate(-50%, -50%) scale(1);
+    transform: translate(-50%, -50%);
     object-fit: cover;
-    transition: transform 1s ease;
-    opacity: 1 !important;
-    will-change: transform;
   }
-  main.content {
+
+  /* Кликабельная зона для верхних 80% */
+  .click-zone {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 80vh; /* верхние 80% экрана */
+    z-index: 2;
+    cursor: pointer;
+  }
+
+  /* Контент и кнопки */
+  .index-page {
     position: relative;
-    z-index: 1;
-    margin-top: 20px;
+    z-index: 3;
     max-width: 1200px;
-    padding: 0 20px;
+    margin: 0 auto;
+    padding: 170px 40px 40px 40px;
     color: white;
   }
+
   .content-section {
     display: none;
     margin-top: 40px;
@@ -43,19 +56,20 @@
   .spacer {
     height: 1500px;
   }
+
   .centered-link-wrapper {
     position: fixed;
-    bottom: 60px;
+    bottom: 8%;
     left: 50%;
     transform: translateX(-50%);
-    z-index: 2;
-    pointer-events: auto;
+    z-index: 4;
     text-align: center;
   }
+
   .section-link {
-    font-family: 'Helvetica', 'Arial', sans-serif;
+    font-family: Helvetica, Arial, sans-serif;
     font-weight: 300;
-    font-size: 1.8rem;
+    font-size: 30px;
     color: #c0c0c0;
     text-decoration: none;
     padding: 5px 40px;
@@ -68,58 +82,9 @@
     background-color: #2600ff8d;
     color: #e66fef;
   }
-
-  /* Панель управления */
-  .control-panel {
-    position: fixed;
-    bottom: 20px;
-    left: 20px;
-    background: linear-gradient(135deg, #1f1f1f, #3a3a3a);
-    padding: 15px;
-    border-radius: 10px;
-    color: white;
-    font-size: 14px;
-    max-width: 340px;
-    z-index: 50;
-    pointer-events: auto;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.6);
-    transition: max-height 0.4s ease, padding 0.4s ease;
-    overflow: hidden;
-    max-height: 500px; /* развернуто */
-  }
-
-  .control-panel.collapsed {
-    max-height: 40px; /* свернуто в одну строку */
-    padding: 5px 15px;
-  }
-
-  .control-panel label {
-    display: block;
-    margin-bottom: 6px;
-  }
-  .control-panel input[type="range"], .control-panel select, .control-panel input[type="color"] {
-    width: 100%;
-    margin-bottom: 15px;
-    pointer-events: auto;
-    padding: 3px 6px;
-    border-radius: 5px;
-    border: none;
-    background: #2a2a2a;
-    color: white;
-  }
-
-  .toggle-btn {
-    background: #2600ff;
-    color: white;
-    border: none;
-    padding: 4px 10px;
-    border-radius: 5px;
-    cursor: pointer;
-    margin-bottom: 10px;
-    font-weight: 600;
-  }
 </style>
 
+<!-- Видео -->
 <div class="video-background">
   <video autoplay muted loop playsinline preload="auto" id="bg-video" poster="{{ url_for('static', filename='images/video-poster.jpg') }}">
     <source src="{{ url_for('static', filename='videos/background1.mp4') }}" type="video/mp4" />
@@ -127,11 +92,14 @@
   </video>
 </div>
 
-<div class="centered-link-wrapper" id="centeredLink">
-  <a href="{{ url_for('catalog') }}" class="section-link" id="catalog-link">САНТЕХНИЧЕСКИЕ УЗЛЫ ВВОДА VAVIP</a>
+<!-- Кликабельная зона на верхние 80% -->
+<div class="click-zone" onclick="window.location.href='{{ url_for('catalog') }}'"></div>
+
+<div class="centered-link-wrapper">
+  <a href="{{ url_for('catalog') }}" class="section-link">САНТЕХНИЧЕСКИЕ УЗЛЫ ВВОДА VAVIP</a>
 </div>
 
-<main class="content">
+<main class="index-page">
   <div id="sections">
     <div class="content-section active" data-index="0">
       <p>Содержимое для первого видео</p>
@@ -145,39 +113,6 @@
   </div>
   <div class="spacer"></div>
 </main>
-
-<div class="control-panel" id="controlPanel">
-  <button class="toggle-btn" id="togglePanel">Развернуть / Свернуть</button>
-
-  <label for="topRange">Вертикальное положение (bottom %): <span id="topValue">60</span></label>
-  <input type="range" id="topRange" min="0" max="100" value="60">
-  
-  <label for="leftRange">Горизонтальное положение (left %): <span id="leftValue">50%</span></label>
-  <input type="range" id="leftRange" min="0" max="100" value="50">
-  
-  <label for="weightRange">Вес шрифта (font-weight): <span id="weightValue">300</span></label>
-  <input type="range" id="weightRange" min="100" max="900" step="100" value="300">
-  
-  <label for="sizeRange">Размер шрифта (px): <span id="sizeValue">28</span></label>
-  <input type="range" id="sizeRange" min="16" max="60" value="28">
-
-  <label for="fontSelect">Шрифт:</label>
-  <select id="fontSelect">
-    <option value="Helvetica, Arial, sans-serif" selected>Helvetica</option>
-    <option value="'Arial', sans-serif">Arial</option>
-    <option value="'Times New Roman', serif">Times New Roman</option>
-    <option value="'Courier New', monospace">Courier New</option>
-    <option value="'Verdana', sans-serif">Verdana</option>
-    <option value="'Futura', sans-serif">Futura</option>
-    <option value="'Gill Sans', sans-serif">Gill Sans</option>
-    <option value="'Trebuchet MS', sans-serif">Trebuchet MS</option>
-    <option value="'Roboto', sans-serif">Roboto</option>
-    <option value="'Open Sans', sans-serif">Open Sans</option>
-  </select>
-
-  <label for="colorPicker">Цвет текста:</label>
-  <input type="color" id="colorPicker" value="#c0c0c0">
-</div>
 
 <script>
   const videos = [
@@ -228,49 +163,5 @@
       section.classList.toggle('active', Number(section.dataset.index) === 0);
     });
   }
-
-  const centeredLink = document.getElementById('centeredLink');
-  const link = document.getElementById('catalog-link');
-
-  const topRange = document.getElementById('topRange');
-  const leftRange = document.getElementById('leftRange');
-  const weightRange = document.getElementById('weightRange');
-  const sizeRange = document.getElementById('sizeRange');
-  const fontSelect = document.getElementById('fontSelect');
-  const colorPicker = document.getElementById('colorPicker');
-  const topValue = document.getElementById('topValue');
-  const leftValue = document.getElementById('leftValue');
-  const weightValue = document.getElementById('weightValue');
-  const sizeValue = document.getElementById('sizeValue');
-
-  topRange.addEventListener('input', () => {
-    centeredLink.style.bottom = topRange.value + '%';
-    topValue.textContent = topRange.value;
-  });
-  leftRange.addEventListener('input', () => {
-    centeredLink.style.left = leftRange.value + '%';
-    leftValue.textContent = leftRange.value + '%';
-  });
-  weightRange.addEventListener('input', () => {
-    link.style.fontWeight = weightRange.value;
-    weightValue.textContent = weightRange.value;
-  });
-  sizeRange.addEventListener('input', () => {
-    link.style.fontSize = sizeRange.value + 'px';
-    sizeValue.textContent = sizeRange.value;
-  });
-  fontSelect.addEventListener('change', () => {
-    link.style.fontFamily = fontSelect.value;
-  });
-  colorPicker.addEventListener('input', () => {
-    link.style.color = colorPicker.value;
-  });
-
-  // Свернуть / развернуть панель
-  const controlPanel = document.getElementById('controlPanel');
-  const toggleBtn = document.getElementById('togglePanel');
-  toggleBtn.addEventListener('click', () => {
-    controlPanel.classList.toggle('collapsed');
-  });
 </script>
 {% endblock %}
