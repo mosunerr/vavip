@@ -6,139 +6,227 @@
   <style>
     html, body {
       margin: 0; padding: 0; height: 100%;
-      background-color: black; color: white;
+      background-color: #0a0a0a; color: #fff;
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       min-height: 100vh;
       box-sizing: border-box;
     }
 
     header {
-      background-color: rgba(0,0,0,0.3);
+      position: fixed; top: 0; left: 0; width: 100%;
+      padding: 5px 30px; box-sizing: border-box;
+      background-color: transparent; z-index: 1000;
+      transition: background-color 0.6s ease, backdrop-filter 0.6s ease,
+                  border-bottom 0.6s ease, box-shadow 0.6s ease;
+      user-select: none;
+    }
+    header:hover {
+      background-color: rgba(0,0,0,0.95);
       backdrop-filter: saturate(180%) blur(8px);
       -webkit-backdrop-filter: saturate(180%) blur(8px);
       border-bottom: 0.5px solid rgba(255, 255, 255, 0.1);
-      box-shadow: 0 0.5px 4px rgba(0,0,0,0.2);
-      user-select: none;
-      padding: 5px 30px;
-      box-sizing: border-box;
-      position: fixed; top: 0; left: 0; width: 100%;
-      z-index: 1000;
-      transition: background-color 0.4s ease;
+      box-shadow: 0 0.5px 8px rgba(0,0,0,0.4);
     }
-    header:hover { background-color: rgba(0, 0, 0, 1); }
 
     .header-top {
-      display: flex; align-items: center; justify-content: space-between;
-      height: 50px; color: #c0c0c0;
+      display: flex; justify-content: space-between; align-items: center;
+      height: 50px; color: #c0c0c0; margin-bottom: 8px;
     }
-
-    .header-left, .header-right { flex: 1; display: flex; align-items: center; }
+    .header-left, .header-right { display: flex; align-items: center; flex:1; }
     .header-left { justify-content: flex-start; gap: 28px; }
-    .header-right { justify-content: flex-end; gap: 56px; }
+    .header-right { justify-content: flex-end; gap: 40px; }
 
-    /* Location icon */
-    .location-icon {
+    .location-icon, .header-right svg {
       width: 22px; height: 22px;
-      stroke: #c0c0c0; stroke-width: 1;
-      fill: none; cursor: default;
-      transition: stroke 0.3s ease, transform 0.3s ease;
-    }
-    .location-icon:hover { stroke: #e0e0e0; transform: scale(1.2); }
-
-    /* Right icons */
-    .header-right svg {
-      width: 18px; height: 18px;
-      stroke: #c0c0c0; stroke-width: 0.9;
-      fill: none; stroke-linejoin: round;
-      transition: stroke 0.3s ease, transform 0.3s ease;
-    }
-    .header-right a:hover svg { stroke: #e0e0e0; transform: scale(1.2); }
-
-    /* Phone number */
-    .phone-number a {
-      font-family: Helvetica, Arial, sans-serif;
-      color: #c0c0c0;
-      font-weight: 300;
-      font-size: 0.95rem;
-      text-decoration: none;
-      user-select: text;
+      stroke: #c0c0c0; stroke-width: 1.2; fill: none;
+      stroke-linecap: round; stroke-linejoin: round;
       cursor: pointer;
+      transition: stroke 0.3s ease, transform 0.3s ease;
+    }
+    .location-icon:hover, .header-right a:hover svg { stroke: #f0f0f0; transform: scale(1.2); }
+
+    .phone-number a {
+      color: #c0c0c0; text-decoration: none;
+      font-family: Helvetica, Arial, sans-serif;
+      font-weight: 300; font-size: 0.95rem;
       transition: color 0.3s ease;
     }
-    .phone-number a:hover { color: #e0e0e0; text-decoration: none; }
+    .phone-number a:hover { color: #f0f0f0; }
 
     .header-center {
       position: absolute; left: 50%; transform: translateX(-50%);
       display: flex; align-items: center;
     }
-    .header-center a img { height: 90px; width: auto; vertical-align: middle; }
+    .header-center a img { height: 88px; width: auto; }
 
-    /* Center line */
     .center-divider {
       position: relative; height: 0.5px; width: 100%;
-      margin: 8px 0 0 0;
       background: linear-gradient(to right, transparent 0%, #c0c0c0 15%, #c0c0c0 85%, transparent 100%);
-      filter: drop-shadow(0 0 0.5px #c0c0c0);
-      overflow: hidden;
     }
 
     .header-bottom {
       display: flex; justify-content: center; align-items: center;
-      flex-wrap: wrap; padding: 16px 40px 20px 40px; /* увеличили расстояние снизу */
-      gap: 28px;
+      flex-wrap: wrap; padding: 16px 40px 20px 40px; gap: 28px;
       font-family: Helvetica, Arial, sans-serif; font-weight: 300;
       font-size: 0.95rem; color: #c0c0c0; letter-spacing: 0.05em;
       position: relative;
     }
-
-    .header-bottom div {
-      flex: none; text-align: center; user-select: none;
-      cursor: pointer; position: relative; padding: 3px 6px;
-      transition: color 0.3s ease; display: inline-block;
+    .menu-item {
+      position: relative; cursor: pointer; flex: none; padding: 3px 6px;
+      transition: color 0.3s ease; text-align: center;
     }
-    .header-bottom div:hover { color: #e0e0e0; }
-    .header-bottom div::after {
+    .menu-item:hover { color: #f0f0f0; }
+    .menu-item::after {
       content: ''; position: absolute; bottom: 0; left: 0;
       height: 2px; width: 0;
-      background: linear-gradient(to right, transparent, #999999 50%, transparent);
+      background: linear-gradient(to right, transparent, #999 50%, transparent);
       transition: width 1.5s ease;
     }
-    .header-bottom div:hover::after { width: 100%; }
+    .menu-item:hover::after { width: 100%; }
 
-    .header-bottom div .mini-page {
-      display: none; position: absolute; top: 36px; left: 50%;
-      transform: translateX(-50%); width: 190px;
-      background: rgba(18, 20, 23, 0.9); border: 1px solid #c0c0c0;
-      border-radius: 6px; padding: 8px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.5); z-index: 100; color: white;
+    .dropdown-content {
+      position: fixed;
+      left: 7.5vw;
+      width: 85vw;
+      height: 80vh;
+      background: rgba(20,20,20,0.92);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      color: #c0c0c0;
+      overflow-y: auto;
+      padding: 40px;
+      box-sizing: border-box;
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(-20px);
+      transition: transform 1s cubic-bezier(.19,1,.22,1), opacity 1s ease, visibility 0s linear 1s;
+      z-index: 900;
+      border-radius: 4px;
     }
-    .header-bottom div:hover .mini-page { display: block; }
-    .mini-page img { max-width: 100%; border-radius: 4px; margin-bottom: 8px; }
-    .mini-page p { margin: 0; font-size: 0.85rem; line-height: 1.3em; }
+    .dropdown-content.show {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+      transition-delay: 0s;
+    }
 
     main {
-      flex-grow: 1; max-width: 1200px; width: 100%;
-      margin: 0 auto; padding: 180px 40px 40px 40px;
-      box-sizing: border-box; overflow-wrap: break-word;
-      position: relative; z-index: 10; color: white;
+      max-width: 1200px; width: 100%; margin: 0 auto;
+      padding: 180px 40px 40px 40px; box-sizing: border-box;
+      color: #fff; position: relative; z-index: 10;
     }
 
     footer {
-      background-color: rgba(18, 20, 23, 0.7);
-      color: rgb(150, 160, 203); padding: 20px 40px;
-      text-align: center; flex-shrink: 0; box-sizing: border-box;
-      position: relative; z-index: 10;
-      backdrop-filter: saturate(180%) blur(5px);
-      -webkit-backdrop-filter: saturate(180%) blur(5px);
+      background-color: rgba(18,20,23,0.85);
       border-top: 1px solid #2f3340;
+      backdrop-filter: saturate(180%) blur(5px);
+      padding: 15px 30px 30px 30px;
+      box-sizing: border-box;
+      color: #96a0cb;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      position: relative;
+      z-index: 10;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      text-transform: capitalize;
+    }
+    .footer-content {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .columns {
+      display: flex;
+      justify-content: flex-start;
+      gap: 48px;
+      flex-wrap: nowrap;
+      padding-top: 32px;
+      font-size: 1rem;
+      line-height: 1.6;
+      color: #c0c0c0;
+    }
+    .columns > div {
+      min-width: 140px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .columns strong {
+      color: #f0f0f0;
+      font-size: 1.1rem;
+      margin-bottom: 8px;
+      font-weight: 600;
+    }
+    .columns a {
+      color: #a2a8bb;
+      text-decoration: none;
+      font-weight: 400;
+      transition: color 0.3s ease;
+    }
+    .columns a:hover { color: #f0f0f0; }
+
+    .footer-divider {
+      height: 1px;
+      width: 100%;
+      background: linear-gradient(to right, transparent 0%, #999 15%, #999 85%, transparent 100%);
+      margin-top: 32px;
+      margin-bottom: 24px;
+      opacity: 0.5;
+    }
+
+    .footer-bottom-wrapper {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 24px;
+    }
+    .footer-bottom {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+    .vertical-text-footer img {
+      height: 1rem; /* подбираем визуально как текст был */
+      display: block;
+      margin-right: 15px;
+      user-select: none;
+    }
+    .social-icons {
+      display: flex;
+      flex-direction: row;
+      gap: 18px;
+    }
+    .social-icon svg {
+      cursor: pointer;
+      stroke: #c0c0c0;
+      fill: none;
+      width: 22px;
+      height: 22px;
+      transition: stroke 0.3s ease, fill 0.3s ease, transform 0.3s ease;
+    }
+    .social-icon:hover svg,
+    .social-icon:focus svg {
+      stroke: #f0f0f0;
+      fill: #f0f0f0;
+      transform: scale(1.2);
+    }
+    .copyright-text {
+      font-size: 0.75rem;
+      color: #c0c0c0;
+      white-space: nowrap;
+      user-select: none;
+      flex-shrink: 0;
+      margin-left: 0;
     }
   </style>
 </head>
 <body>
+
 <header>
   <div class="header-top">
     <div class="header-left">
-      <svg class="location-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false" title="Местоположение">
+      <svg class="location-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
         <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5A2.5 2.5 0 1114.5 9 2.5 2.5 0 0112 11.5z"/>
       </svg>
       <div class="phone-number"><a href="tel:89312487013">8 931 248 70 13</a></div>
@@ -150,21 +238,21 @@
     </div>
     <div class="header-right">
       <a href="#" aria-label="Сумочка">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-          <path d="M8 7V5a4 4 0 018 0v2" />
-          <rect x="3" y="7" width="18" height="14" rx="2" ry="2" />
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M8 7V5a4 4 0 018 0v2"/>
+          <rect x="3" y="7" width="18" height="14" rx="2" ry="2"/>
         </svg>
       </a>
       <a href="#" aria-label="Поиск">
-        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" stroke-linecap="round" stroke-linejoin="round">
           <circle cx="10.5" cy="10.5" r="7.5"/>
           <line x1="16" y1="16" x2="21" y2="21" stroke="#c0c0c0" stroke-width="2"/>
         </svg>
       </a>
       <a href="#" aria-label="Личный кабинет">
-        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-          <circle cx="12" cy="8" r="4" />
-          <path d="M4 20c0-4 8-4 8-4s8 0 8 4" />
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="8" r="4"/>
+          <path d="M4 20c0-4 8-4 8-4s8 0 8 4"/>
         </svg>
       </a>
     </div>
@@ -173,46 +261,40 @@
   <div class="center-divider"></div>
 
   <div class="header-bottom">
-    <div>
-      КОНТАКТЫ
-      <div class="mini-page">
-        <img src="{{ url_for('static', filename='images/item1.jpg') }}" alt="Описание КОНТАКТЫ" />
-        <p>Описание к КОНТАКТЫ с фотографией.</p>
+    <div class="menu-item">КОНТАКТЫ
+      <div class="dropdown-content">
+        <h2>Контакты</h2>
+        <p>Карта, адрес, телефоны, форма обратной связи. Всё изысканно.</p>
       </div>
     </div>
-    <div>
-      О КОМПАНИИ
-      <div class="mini-page">
-        <img src="{{ url_for('static', filename='images/item2.jpg') }}" alt="Описание О КОМПАНИИ" />
-        <p>Описание к О КОМПАНИИ с фотографией.</p>
+    <div class="menu-item">О КОМПАНИИ
+      <div class="dropdown-content">
+        <h2>О компании</h2>
+        <p>Легенда бренда, миссия, история — роскошь и ясность.</p>
       </div>
     </div>
-    <div>
-      УЗЕЛ ВВОДА
-      <div class="mini-page">
-        <img src="{{ url_for('static', filename='images/item3.jpg') }}" alt="Описание УЗЕЛ ВВОДА" />
-        <p>Описание к УЗЕЛ ВВОДА с фотографией.</p>
+    <div class="menu-item">УЗЕЛ ВВОДА
+      <div class="dropdown-content">
+        <h2>Узел ввода</h2>
+        <p>Технические схемы и инструкции — строго и красиво.</p>
       </div>
     </div>
-    <div>
-      БУТИК
-      <div class="mini-page">
-        <img src="{{ url_for('static', filename='images/item4.jpg') }}" alt="Описание БУТИК" />
-        <p>Описание к БУТИК с фотографией.</p>
+    <div class="menu-item">ПРОЕКТИРОВАНИЕ BIM
+      <div class="dropdown-content">
+        <h2>Проектирование BIM</h2>
+        <p>Файлы, библиотеки, инструкции — технологично и элегантно.</p>
       </div>
     </div>
-    <div>
-      ПРОЕКТИРОВАНИЕ BIM
-      <div class="mini-page">
-        <img src="{{ url_for('static', filename='images/item5.jpg') }}" alt="Описание ПРОЕКТИРОВАНИЕ BIM" />
-        <p>Описание к ПРОЕКТИРОВАНИЕ BIM с фотографией.</p>
+    <div class="menu-item">БУТИК
+      <div class="dropdown-content">
+        <h2>Бутик</h2>
+        <p>Премиальные товары, фото, промо — изысканно.</p>
       </div>
     </div>
-    <div>
-      МАГАЗИН
-      <div class="mini-page">
-        <img src="{{ url_for('static', filename='images/item6.jpg') }}" alt="Описание МАГАЗИН" />
-        <p>Описание к МАГАЗИН с фотографией.</p>
+    <div class="menu-item">МАГАЗИН
+      <div class="dropdown-content">
+        <h2>Магазин</h2>
+        <p>Карточки товаров, фильтры, кнопки — удобно и строго.</p>
       </div>
     </div>
   </div>
@@ -223,7 +305,147 @@
 </main>
 
 <footer>
-  © 2025 Vavip
+  <div class="footer-content">
+    <div class="columns">
+      <div>
+        <strong>КОНФИДЕЦИАЛЬНОСТЬ И УСЛОВИЯ</strong>
+        <a href="#">ПОЛИТИКА ОБРАБОТКИ И ЗАЩИТЫ ПЕРСОНАЛЬНЫХ ДАННЫХ И ИСПОЛЬЗОВАНИЯ COOKIE</a>
+        <a href="#">ДОГОВОР ОФЕРТЫ БИМ</a>
+        <a href="#">ГАРАНТИЯ</a>
+        <a href="#">ДОГОВОР НА ПРОЕКТИРОВАНИЕ ИНЖЕНЕРНЫХ СИСТЕМ</a>
+      </div>
+      <div>
+        <strong>СОТРУДНИЧЕСТВО
+        </strong>
+        <a href="#">ДИЗАЙНЕРМ И АРХИТЕКТОРАМ</a>
+        <a href="#">РУКОВОДИТЕЛЯМ СТРОИТЕЛЬНЫХ КОМПАНИЙ И ПРОЕКТОВ</a>
+        <a href="#">ДИСТРИБЬЮТОРАМ</a>
+      </div>
+    </div>
+
+    <div class="footer-divider"></div>
+
+    <div class="footer-bottom-wrapper">
+      <div class="footer-bottom">
+        <div class="vertical-text-footer">
+          <img src="{{ url_for('static', filename='images/vavip_logo_text.png') }}" alt="Vavip" />
+        </div>
+        <div class="social-icons">
+          <a href="#" aria-label="Telegram" class="social-icon" title="Telegram">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="#ccc" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+              <path d="M22 2L11 13" />
+              <path d="M22 2L15 22L11 13L2 9L22 2Z" />
+            </svg>
+          </a>
+          <a href="#" aria-label="Instagram" class="social-icon" title="Instagram">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="#ccc" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+              <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
+              <path d="M16 11.37a4 4 0 1 1-4.74-4.74"/>
+              <circle cx="17.5" cy="6.5" r="1"/>
+            </svg>
+          </a>
+          <a href="#" aria-label="VK" class="social-icon" title="VK">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="#ccc" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+              <path d="M4 4h4l3 6 4-6h4v16h-4l-3-6-4 6H4V4Z"/>
+            </svg>
+          </a>
+          <a href="#" aria-label="Pinterest" class="social-icon" title="Pinterest">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="#ccc" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+              <circle cx="12" cy="12" r="10"/>
+              <path d="M13.5 8a1.5 1.5 0 1 1-3 0c0-.75.75-1.5 1.5-1.5S13.5 7.25 13.5 8zM11 14c-.5 2 3 2.5 3 1.25 0-1.25-1.5-1.75-1.5-3.25"/>
+            </svg>
+          </a>
+          <a href="#" aria-label="YouTube" class="social-icon" title="YouTube">
+            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="20" fill="none" stroke="#ccc" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+              <rect x="2" y="6" width="20" height="12" rx="4" ry="4"/>
+              <polygon points="10 9 16 12 10 15" fill="#ccc" stroke="none"/>
+            </svg>
+          </a>
+        </div>
+      </div>
+      <div class="copyright-text">
+        © 2024 Vavip. All Rights Reserved
+      </div>
+    </div>
+  </div>
 </footer>
+
+<script>
+  function alignDropdowns() {
+    const header = document.querySelector('header');
+    const headerHeight = header.offsetHeight;
+    document.querySelectorAll('.dropdown-content').forEach(dc => {
+      dc.style.top = headerHeight + 'px';
+    });
+  }
+  window.addEventListener('load', alignDropdowns);
+  window.addEventListener('resize', alignDropdowns);
+
+  document.querySelectorAll('.menu-item').forEach(item => {
+    const dropdown = item.querySelector('.dropdown-content');
+    let isHoveredMenu = false;
+    let isHoveredDropdown = false;
+    let hoverTimer;
+
+    item.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const isShown = dropdown.classList.contains('show');
+
+      document.querySelectorAll('.dropdown-content.show').forEach(dc => {
+        if (dc !== dropdown) dc.classList.remove('show');
+      });
+
+      if (isShown) {
+        dropdown.classList.remove('show');
+      } else {
+        dropdown.classList.add('show');
+      }
+    });
+
+    item.addEventListener('mouseenter', () => {
+      isHoveredMenu = true;
+      hoverTimer = setTimeout(() => {
+        document.querySelectorAll('.dropdown-content.show').forEach(dc => {
+          if (dc !== dropdown) dc.classList.remove('show');
+        });
+        dropdown.classList.add('show');
+      }, 300);
+    });
+    item.addEventListener('mouseleave', () => {
+      isHoveredMenu = false;
+      clearTimeout(hoverTimer);
+      setTimeout(() => {
+        if (!isHoveredDropdown && !isHoveredMenu) {
+          dropdown.classList.remove('show');
+        }
+      }, 100);
+    });
+
+    dropdown.addEventListener('mouseenter', () => {
+      isHoveredDropdown = true;
+    });
+    dropdown.addEventListener('mouseleave', () => {
+      isHoveredDropdown = false;
+      setTimeout(() => {
+        if (!isHoveredDropdown && !isHoveredMenu) {
+          dropdown.classList.remove('show');
+        }
+      }, 100);
+    });
+  });
+
+  window.addEventListener('click', () => {
+    document.querySelectorAll('.dropdown-content.show').forEach(dc => {
+      dc.classList.remove('show');
+    });
+  });
+
+  window.addEventListener('scroll', () => {
+    document.querySelectorAll('.dropdown-content.show').forEach(dc => {
+      dc.classList.remove('show');
+    });
+  });
+</script>
+
 </body>
 </html>
