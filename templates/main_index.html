@@ -1,167 +1,194 @@
 {% extends "layout.html" %}
 {% block title %}Главная страница Vavip{% endblock %}
-{% block content %}
+
+{% block video_fullscreen %}
 <style>
-  /* Видео и фон */
-  .video-background {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    overflow: hidden;
-    z-index: 1;
-  }
+/* Видео секции */
+.video-section {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  scroll-snap-align: start;
+}
 
-  .video-background video {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    min-width: 100%;
-    min-height: 100%;
-    width: auto;
-    height: auto;
-    transform: translate(-50%, -50%);
-    object-fit: cover;
-  }
+.video-section video {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
 
-  /* Кликабельная зона для верхних 80% */
-  .click-zone {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 80vh; /* верхние 80% экрана */
-    z-index: 2;
-    cursor: pointer;
-  }
+.video-section + .video-section { margin-top: -5vh; }
 
-  /* Контент и кнопки */
-  .index-page {
-    position: relative;
-    z-index: 3;
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 170px 40px 40px 40px;
-    color: white;
-  }
+/* Надписи на видео */
+.video-caption {
+  position: absolute;
+  bottom: 80px;
+  width: 100%;
+  text-align: center;
+  font-family: Helvetica, Arial, sans-serif;
+  font-weight: 200;
+  font-size: 1.2rem;
+  color: #fff;
+  text-shadow: 0 1px 6px rgba(0,0,0,0.5);
+  pointer-events: none;
+  opacity: 0.7;
+  transition: transform 0.3s, opacity 0.3s;
+}
 
-  .content-section {
-    display: none;
-    margin-top: 40px;
-  }
-  .content-section.active {
-    display: block;
-  }
-  .spacer {
-    height: 1500px;
-  }
+.video-section.active .video-caption {
+  transform: translateY(-10px);
+  opacity: 1;
+}
 
-  .centered-link-wrapper {
-    position: fixed;
-    bottom: 8%;
-    left: 50%;
-    transform: translateX(-50%);
-    z-index: 4;
-    text-align: center;
-  }
+/* Scroll snap */
+html, body {
+  height: 100%;
+  margin: 0;
+  scroll-behavior: smooth;
+  scroll-snap-type: y mandatory;
+  overflow-y: scroll;
+}
 
-  .section-link {
-    font-family: Helvetica, Arial, sans-serif;
-    font-weight: 300;
-    font-size: 30px;
-    color: #c0c0c0;
-    text-decoration: none;
-    padding: 5px 40px;
-    border-radius: 200px;
-    cursor: pointer;
-    transition: all 0.5s ease;
-    letter-spacing: 1.5px;
-  }
-  .section-link:hover {
-    background-color: #2600ff8d;
-    color: #e66fef;
-  }
+/* Футер поверх 4-го видео */
+.video-footer {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  left: 0;
+  background-color: rgba(18, 20, 22, 0.95);
+  z-index: 10;
+}
 </style>
 
-<!-- Видео -->
-<div class="video-background">
-  <video autoplay muted loop playsinline preload="auto" id="bg-video" poster="{{ url_for('static', filename='images/video-poster.jpg') }}">
-    <source src="{{ url_for('static', filename='videos/background1.mp4') }}" type="video/mp4" />
-    Ваш браузер не поддерживает видео.
+<div class="video-section">
+  <video autoplay muted loop playsinline preload="auto" poster="{{ url_for('static', filename='images/video-poster.jpg') }}">
+    <source src="{{ url_for('static', filename='videos/background1.mp4') }}" type="video/mp4">
   </video>
+  <div class="video-caption">Узел ввода</div>
 </div>
 
-<!-- Кликабельная зона на верхние 80% -->
-<div class="click-zone" onclick="window.location.href='{{ url_for('catalog') }}'"></div>
-
-<div class="centered-link-wrapper">
-  <a href="{{ url_for('catalog') }}" class="section-link">САНТЕХНИЧЕСКИЕ УЗЛЫ ВВОДА VAVIP</a>
+<div class="video-section">
+  <video autoplay muted loop playsinline preload="auto" poster="{{ url_for('static', filename='images/video-poster2.jpg') }}">
+    <source src="{{ url_for('static', filename='videos/background2.mp4') }}" type="video/mp4">
+  </video>
+  <div class="video-caption">Проектирование BIM</div>
 </div>
 
-<main class="index-page">
-  <div id="sections">
-    <div class="content-section active" data-index="0">
-      <p>Содержимое для первого видео</p>
+<div class="video-section">
+  <video autoplay muted loop playsinline preload="auto" poster="{{ url_for('static', filename='images/video-poster3.jpg') }}">
+    <source src="{{ url_for('static', filename='videos/background3.mp4') }}" type="video/mp4">
+  </video>
+  <div class="video-caption">Бутик</div>
+</div>
+
+<div class="video-section">
+  <video autoplay muted loop playsinline preload="auto" poster="{{ url_for('static', filename='images/video-poster4.jpg') }}">
+    <source src="{{ url_for('static', filename='videos/background4.mp4') }}" type="video/mp4">
+  </video>
+  <div class="video-caption">Магазин</div>
+
+  <!-- Футер поверх 4-го видео -->
+  <footer class="video-footer">
+    <div class="footer-content">
+      <div class="columns">
+        <div>
+          <strong>КОНФИДЕЦИАЛЬНОСТЬ И УСЛОВИЯ</strong>
+          <a href="#">ПОЛИТИКА ОБРАБОТКИ И ЗАЩИТЫ ПЕРСОНАЛЬНЫХ ДАННЫХ И ИСПОЛЬЗОВАНИЯ COOKIE</a>
+          <a href="#">ДОГОВОР ОФЕРТЫ БИМ</a>
+          <a href="#">ГАРАНТИЯ</a>
+          <a href="#">ДОГОВОР НА ПРОЕКТИРОВАНИЕ ИНЖЕНЕРНЫХ СИСТЕМ</a>
+        </div>
+        <div>
+          <strong>СОТРУДНИЧЕСТВО</strong>
+          <a href="#">ДИЗАЙНЕРАМ И АРХИТЕКТОРАМ</a>
+          <a href="#">РУКОВОДИТЕЛЯМ СТРОИТЕЛЬНЫХ КОМПАНИЙ И ПРОЕКТОВ</a>
+          <a href="#">ДИСТРИБЬЮТОРАМ</a>
+        </div>
+      </div>
+
+      <div class="footer-divider"></div>
+
+      <div class="footer-bottom-wrapper">
+        <div class="footer-bottom">
+          <div class="vertical-text-footer">
+            <img src="{{ url_for('static', filename='images/vavip_logo_text.png') }}" alt="Vavip" />
+          </div>
+          <div class="social-icons">
+            {% for name in ['telegram','instagram','vk','pinterest','youtube'] %}
+            <a href="#" class="social-icon {{ name }}"><img src="{{ url_for('static', filename='images/icons/' + name + '.svg') }}" alt="{{ name }}"></a>
+            {% endfor %}
+          </div>
+        </div>
+        <div class="copyright-text">© 2024 Vavip. All Rights Reserved</div>
+      </div>
     </div>
-    <div class="content-section" data-index="1">
-      <p>Содержимое для второго видео</p>
-    </div>
-    <div class="content-section" data-index="2">
-      <p>Саныч всегда прав!!!</p>
-    </div>
-  </div>
-  <div class="spacer"></div>
-</main>
+  </footer>
+</div>
 
 <script>
-  const videos = [
-    "{{ url_for('static', filename='videos/background1.mp4') }}",
-    "{{ url_for('static', filename='videos/background2.mp4') }}",
-    "{{ url_for('static', filename='videos/background3.mp4') }}"
-  ];
-  const videoElement = document.getElementById('bg-video');
-  const contentSections = document.querySelectorAll('.content-section');
-  let currentVideoIndex = 0;
+// Логика активного видео
+const videoSections = document.querySelectorAll('.video-section');
+function updateActiveVideo() {
+  const windowMiddle = window.innerHeight / 2;
+  videoSections.forEach(section => {
+    const rect = section.getBoundingClientRect();
+    const sectionMiddle = rect.top + rect.height / 2;
+    if (Math.abs(sectionMiddle - windowMiddle) < rect.height / 2) {
+      section.classList.add('active');
+    } else {
+      section.classList.remove('active');
+    }
+  });
+}
+window.addEventListener('scroll', updateActiveVideo);
+window.addEventListener('resize', updateActiveVideo);
+updateActiveVideo();
 
-  async function changeVideoIndex(index) {
-    if(index === currentVideoIndex) return;
-    videoElement.pause();
-    videoElement.src = videos[index];
-    videoElement.load();
-    await videoElement.play().catch(e => console.error('Video play error:', e));
+// Блюр видео при открытии dropdown с задержкой
+const menuItems = document.querySelectorAll('.menu-item');
+menuItems.forEach(item => {
+  const dropdown = item.querySelector('.dropdown-content');
+  let hoverTimeout;
 
-    videoElement.style.transition = "transform 1s ease";
-    videoElement.style.transform = index === 2 ? "translate(-50%, -50%) scale(0.5)" : "translate(-50%, -50%) scale(1)";
+  item.addEventListener('mouseenter', () => {
+    hoverTimeout = setTimeout(() => {
+      dropdown.classList.add('show');
+      videoSections.forEach(sec => sec.querySelector('video').style.filter = 'blur(5px)');
+    }, 300); // задержка перед выпадением
+  });
 
-    contentSections.forEach(section => {
-      section.classList.toggle('active', Number(section.dataset.index) === index);
-    });
-    currentVideoIndex = index;
-  }
+  item.addEventListener('mouseleave', () => {
+    clearTimeout(hoverTimeout);
+    setTimeout(() => {
+      if (!dropdown.matches(':hover')) {
+        dropdown.classList.remove('show');
+        videoSections.forEach(sec => sec.querySelector('video').style.filter = '');
+      }
+    }, 50);
+  });
 
-  function debounce(func, wait = 400) {
-    let timeout;
-    return function(...args) {
-      clearTimeout(timeout);
-      timeout = setTimeout(() => func.apply(this, args), wait);
-    };
-  }
+  dropdown.addEventListener('mouseenter', () => {
+    clearTimeout(hoverTimeout);
+    dropdown.classList.add('show');
+    videoSections.forEach(sec => sec.querySelector('video').style.filter = 'blur(5px)');
+  });
 
-  const onScrollDebounced = debounce(() => {
-    const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-    const docHeight = document.documentElement.scrollHeight - window.innerHeight;
-    const scrollPercent = (scrollTop / docHeight) * 100;
-    if(scrollPercent < 33) changeVideoIndex(0);
-    else if(scrollPercent < 67) changeVideoIndex(1);
-    else changeVideoIndex(2);
-  }, 400);
-  window.addEventListener('scroll', onScrollDebounced);
-
-  window.onload = () => {
-    contentSections.forEach(section => {
-      section.classList.toggle('active', Number(section.dataset.index) === 0);
-    });
-  }
+  dropdown.addEventListener('mouseleave', () => {
+    dropdown.classList.remove('show');
+    videoSections.forEach(sec => sec.querySelector('video').style.filter = '');
+  });
+});
 </script>
 {% endblock %}
+
+{% block content %}
+<main>
+  <div style="height:100px;"></div>
+</main>
+{% endblock %}
+/

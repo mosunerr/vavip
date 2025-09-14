@@ -1,337 +1,97 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8" />
-  <title>{% block title %}Vavip{% endblock %}</title>
-  <style>
-    html, body {
-      margin: 0; padding: 0; height: 100%;
-      background-color: #0a0a0a; color: #fff;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      min-height: 100vh;
-      box-sizing: border-box;
-    }
+<meta charset="UTF-8">
+<title>{% block title %}Vavip{% endblock %}</title>
+<style>
+html,body{margin:0;padding:0;height:100%;background:#0a0a0a;color:#fff;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;box-sizing:border-box;overflow-x:hidden}
+*,*::before,*::after{box-sizing:inherit}
 
-    header {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      padding: 5px 30px;
-      box-sizing: border-box;
-      background-color: transparent; 
-      z-index: 1000;
-      transition: background-color 0.6s ease, backdrop-filter 0.6s ease,
-                  border-bottom 0.6s ease, box-shadow 0.6s ease;
-      user-select: none;
-    }
+/* Шапка и dropdown */
+header{position:fixed;top:0;left:0;width:100%;padding:5px 30px;z-index:1000;transition:0.6s;user-select:none}
+header:hover{background:#121416;border-bottom:0.5px solid rgba(255,255,255,0.1);box-shadow:0 0.5px 8px rgba(0,0,0,0.4)}
+.header-top,.header-left,.header-right,.header-center{display:flex;align-items:center}
+.header-top{justify-content:space-between;height:50px;color:#c0c0c0;margin-bottom:8px}
+.header-left{gap:28px;justify-content:flex-start}.header-right{gap:40px;justify-content:flex-end}.header-center{position:absolute;left:50%;transform:translateX(-50%)}
+.header-center img{height:100px;margin-top:10px}
+.location-icon,.header-right svg{width:22px;height:22px;stroke:#c0c0c0;fill:none;stroke-linecap:round;stroke-linejoin:round;cursor:pointer;transition:0.3s}
+.location-icon:hover,.header-right a:hover svg{stroke:#f0f0f0;transform:scale(1.2)}
+.phone-number a{color:#c0c0c0;text-decoration:none;font-family:Helvetica,Arial,sans-serif;font-weight:300;font-size:0.95rem;transition:0.3s}
+.phone-number a:hover{color:#f0f0f0}
+.center-divider{height:0.5px;width:100%;background:linear-gradient(to right,transparent 0%,#c0c0c0 15%,#c0c0c0 85%,transparent 100%)}
+.header-bottom{display:flex;justify-content:center;flex-wrap:wrap;padding:16px 40px 20px;gap:28px;font-family:Helvetica,Arial,sans-serif;font-weight:300;font-size:0.95rem;letter-spacing:0.05em;position:relative;z-index:1100}
+.menu-item{position:relative;cursor:pointer;padding:3px 6px;transition:0.3s;text-align:center}
+.menu-item:hover{color:#f0f0f0}
+.menu-item::after{content:'';position:absolute;bottom:0;left:0;height:2px;width:0;background:linear-gradient(to right,transparent,#999 50%,transparent);transition:width 1.5s}
+.menu-item:hover::after{width:100%}
+.dropdown-content{position:fixed;left:0;right:0;width:100%;height:80vh;background:#121416;color:#c0c0c0;overflow-y:auto;padding:40px 8vw;opacity:0;visibility:hidden;transform:translateY(-20px);transition:transform 1s cubic-bezier(.19,1,.22,1),opacity 1s,visibility 0s linear 1s;border-radius:0 0 4px 4px;top:0;z-index:1050}
+.dropdown-content.show{opacity:1;visibility:visible;transform:translateY(0);transition-delay:0s}
 
-    header:hover {
-      background-color: #121416; 
-      backdrop-filter: none;
-      -webkit-backdrop-filter: none;
-      border-bottom: 0.5px solid rgba(255, 255, 255, 0.1);
-      box-shadow: 0 0.5px 8px rgba(0,0,0,0.4);
-    }
+/* Контент */
+main{max-width:1200px;width:100%;margin:0 auto;padding:40px;color:#fff;position:relative;z-index:10}
 
-    .header-top {
-      display: flex; justify-content: space-between; align-items: center;
-      height: 50px; color: #c0c0c0; margin-bottom: 8px;
-    }
-    .header-left, .header-right { display: flex; align-items: center; flex:1; }
-    .header-left { justify-content: flex-start; gap: 28px; }
-    .header-right { justify-content: flex-end; gap: 40px; }
+/* Футер */
+footer{background-color:#121416;border-top:1px solid #2f3340;padding:15px 30px 30px;color:#96a0cb;display:flex;flex-direction:column;gap:16px;position:relative;z-index:10;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;text-transform:capitalize;width:100%}
+.footer-content{display:flex;flex-direction:column;gap:16px}
+.columns{display:flex;justify-content:flex-start;gap:48px;flex-wrap:nowrap;padding-top:32px;font-size:0.85rem;line-height:1.6;color:#c0c0c0}
+.columns>div{min-width:140px;display:flex;flex-direction:column;gap:10px}
+.columns strong{color:#f0f0f0;font-size:1.1rem;margin-bottom:8px;font-weight:600}
+.columns a{color:#a2a8bb;text-decoration:none;font-weight:400;transition:color 0.3s ease}
+.columns a:hover{color:#f0f0f0}
+.footer-divider{height:1px;width:100%;background:linear-gradient(to right,transparent 0%,#999 15%,#999 85%,transparent 100%);margin-top:32px;margin-bottom:24px;opacity:0.5}
+.footer-bottom-wrapper{display:flex;justify-content:space-between;align-items:center;gap:24px}
+.footer-bottom{display:flex;align-items:center;gap:20px}
+.vertical-text-footer img{height:1rem;display:block;margin-right:15px;user-select:none}
+.social-icons{display:flex;flex-direction:row;gap:18px}
+.social-icon img{width:22px;height:22px;cursor:pointer;transition:transform 0.3s ease,filter 0.3s ease;filter:brightness(1)}
+.social-icon:hover img{transform:scale(1.2);filter:brightness(1.3)}
+.social-icon.telegram img,.social-icon.instagram img,.social-icon.vk img,.social-icon.pinterest img,.social-icon.youtube img{width:20px!important;height:23px!important}
+.copyright-text{font-size:0.75rem;color:#c0c0c0;white-space:nowrap;user-select:none;flex-shrink:0;margin-left:0}
 
-    .location-icon, .header-right svg {
-      width: 22px; height: 22px;
-      stroke: #c0c0c0; stroke-width: 1.2; fill: none;
-      stroke-linecap: round; stroke-linejoin: round;
-      cursor: pointer;
-      transition: stroke 0.3s ease, transform 0.3s ease;
-    }
-    .location-icon:hover, .header-right a:hover svg { stroke: #f0f0f0; transform: scale(1.2); }
-    .phone-number a {
-      color: #c0c0c0; text-decoration: none;
-      font-family: Helvetica, Arial, sans-serif;
-      font-weight: 300; font-size: 0.95rem;
-      transition: color 0.3s ease;
-    }
-    .phone-number a:hover { color: #f0f0f0; }
-    .header-center {
-      position: absolute; left: 50%; transform: translateX(-50%);
-      display: flex; align-items: center;
-    }
-    .header-center a img {
-      height: 100px;
-      width: auto;
-      margin-top: 10px; 
-    }
+  /* Убираем видимый скроллбар, но прокрутка работает */
+  body {
+    scrollbar-width: none; /* для Firefox */
+    -ms-overflow-style: none; /* для IE и Edge */
+  }
+  body::-webkit-scrollbar {
+    display: none; /* для Chrome, Safari, Opera */
+  }
 
-    .center-divider {
-      position: relative; height: 0.5px; width: 100%;
-      background: linear-gradient(to right, transparent 0%, #c0c0c0 15%, #c0c0c0 85%, transparent 100%);
-    }
-
-    .header-bottom {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      flex-wrap: wrap;
-      padding: 16px 40px 20px 40px;
-      gap: 28px;
-      font-family: Helvetica, Arial, sans-serif;
-      font-weight: 300;
-      font-size: 0.95rem;
-      color: #fff; /* ← здесь меняем цвет на белый */
-      letter-spacing: 0.05em;
-      position: relative;
-      z-index: 1100;
-    }
-    .menu-item {
-      position: relative; cursor: pointer; flex: none; padding: 3px 6px;
-      transition: color 0.3s ease; text-align: center;
-    }
-    .menu-item:hover { color: #f0f0f0; }
-    .menu-item::after {
-      content: ''; position: absolute; bottom: 0; left: 0;
-      height: 2px; width: 0;
-      background: linear-gradient(to right, transparent, #999 50%, transparent);
-      transition: width 1.5s ease;
-    }
-    .menu-item:hover::after { width: 100%; }
-
-    .dropdown-content {
-      position: fixed;
-      left: 0;
-      right: 0;
-      width: 100vw;
-      max-width: 100vw;
-      min-width: 0;
-      height: 80vh;
-      background-color: #121416; 
-      backdrop-filter: none;      
-      -webkit-backdrop-filter: none;
-      color: #c0c0c0;
-      overflow-y: auto;
-      padding: 40px 8vw;
-      box-sizing: border-box;
-      opacity: 0;
-      visibility: hidden;
-      transform: translateY(-20px);
-      transition: transform 1s cubic-bezier(.19,1,.22,1), opacity 1s ease, visibility 0s linear 1s;
-      z-index: 1050;
-      border-radius: 0 0 4px 4px;
-      top: 0;
-      left: 0;
-    }
-
-    .dropdown-content.show {
-      opacity: 1;
-      visibility: visible;
-      transform: translateY(0);
-      transition-delay: 0s;
-    }
-
-    main {
-      max-width: 1200px; width: 100%; margin: 0 auto;
-      padding: 180px 40px 40px 40px; box-sizing: border-box;
-      color: #fff; position: relative; z-index: 10;
-    }
-
-    footer {
-      background-color: #121416; 
-      border-top: 1px solid #2f3340;
-      padding: 15px 30px 30px 30px;
-      box-sizing: border-box;
-      color: #96a0cb;
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-      position: relative;
-      z-index: 10;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      text-transform: capitalize;
-    }
-
-    .footer-content {
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-    }
-    .columns {
-      display: flex;
-      justify-content: flex-start;
-      gap: 48px;
-      flex-wrap: nowrap;
-      padding-top: 32px;
-      font-size: 0.85rem; 
-      line-height: 1.6;
-      color: #c0c0c0;
-    }
-    .columns > div {
-      min-width: 140px;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-    .columns strong {
-      color: #f0f0f0;
-      font-size: 1.1rem;
-      margin-bottom: 8px;
-      font-weight: 600;
-    }
-    .columns a {
-      color: #a2a8bb;
-      text-decoration: none;
-      font-weight: 400;
-      transition: color 0.3s ease;
-    }
-    .columns a:hover { color: #f0f0f0; }
-
-    .footer-divider {
-      height: 1px;
-      width: 100%;
-      background: linear-gradient(to right, transparent 0%, #999 15%, #999 85%, transparent 100%);
-      margin-top: 32px;
-      margin-bottom: 24px;
-      opacity: 0.5;
-    }
-
-    .footer-bottom-wrapper {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 24px;
-    }
-    .footer-bottom {
-      display: flex;
-      align-items: center;
-      gap: 20px;
-    }
-    .vertical-text-footer img {
-      height: 1rem; 
-      display: block;
-      margin-right: 15px;
-      user-select: none;
-    }
-
-    /* 🔧 Базовый размер всех иконок футера */
-    .social-icons {
-      display: flex;
-      flex-direction: row;
-      gap: 18px;
-    }
-    .social-icon img {
-      width: 22px; /* общий размер */
-      height: 22px;
-      cursor: pointer;
-      transition: transform 0.3s ease, filter 0.3s ease;
-      filter: brightness(1);
-    }
-    .social-icon:hover img {
-      transform: scale(1.2);
-      filter: brightness(1.3);
-    }
-
-    /* 🔧 Индивидуальные размеры (можно менять) */
-    .social-icon.telegram img { width: 20px !important; height: 23px !important; }
-    .social-icon.instagram img { width: 20px !important; height: 23px !important; }
-    .social-icon.vk img { width: 20px !important; height: 23px !important; }
-    .social-icon.pinterest img { width: 20px !important; height: 23px !important; }
-    .social-icon.youtube img { width: 20px !important; height: 23px !important; }
-
-    .copyright-text {
-      font-size: 0.75rem;
-      color: #c0c0c0;
-      white-space: nowrap;
-      user-select: none;
-      flex-shrink: 0;
-      margin-left: 0;
-    }
-  </style>
+</style>
 </head>
 <body>
 
 <header>
   <div class="header-top">
     <div class="header-left">
-      <svg class="location-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-        <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5A2.5 2.5 0 1114.5 9 2.5 2.5 0 0112 11.5z"/>
-      </svg>
+      <svg class="location-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5A2.5 2.5 0 1114.5 9 2.5 2.5 0 0112 11.5z"/></svg>
       <div class="phone-number"><a href="tel:89312487013">8 931 248 70 13</a></div>
     </div>
     <div class="header-center">
-      <a href="{{ url_for('main_home') }}">
-        <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Логотип Vavip" />
-      </a>
+      <a href="{{ url_for('main_home') }}"><img src="{{ url_for('static', filename='images/logo.png') }}" alt="Логотип Vavip"/></a>
     </div>
     <div class="header-right">
-      <a href="#" aria-label="Сумочка">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M8 7V5a4 4 0 018 0v2"/>
-          <rect x="3" y="7" width="18" height="14" rx="2" ry="2"/>
-        </svg>
-      </a>
-      <a href="#" aria-label="Поиск">
-        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" stroke-linecap="round" stroke-linejoin="round">
-          <circle cx="10.5" cy="10.5" r="7.5"/>
-          <line x1="16" y1="16" x2="21" y2="21" stroke="#c0c0c0" stroke-width="2"/>
-        </svg>
-      </a>
-      <a href="#" aria-label="Личный кабинет">
-        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" stroke-linecap="round" stroke-linejoin="round">
-          <circle cx="12" cy="8" r="4"/>
-          <path d="M4 20c0-4 8-4 8-4s8 0 8 4"/>
-        </svg>
-      </a>
+      <a href="#" aria-label="Сумочка"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M8 7V5a4 4 0 018 0v2"/><rect x="3" y="7" width="18" height="14" rx="2" ry="2"/></svg></a>
+      <a href="#" aria-label="Поиск"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" stroke-linecap="round" stroke-linejoin="round"><circle cx="10.5" cy="10.5" r="7.5"/><line x1="16" y1="16" x2="21" y2="21" stroke="#c0c0c0" stroke-width="2"/></svg></a>
+      <a href="#" aria-label="Личный кабинет"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 8-4 8-4s8 0 8 4"/></svg></a>
     </div>
   </div>
 
   <div class="center-divider"></div>
 
   <div class="header-bottom">
-    <div class="menu-item">КОНТАКТЫ
-      <div class="dropdown-content">
-        <h2>Контакты</h2>
-        <p>Карта, адрес, телефоны, форма обратной связи. Всё изысканно.</p>
-      </div>
+    {% for item in ['КОНТАКТЫ','О КОМПАНИИ','УЗЕЛ ВВОДА','ПРОЕКТИРОВАНИЕ BIM','БУТИК','МАГАЗИН'] %}
+    <div class="menu-item">{{ item }}
+      <div class="dropdown-content"><h2>{{ item }}</h2><p>Информация о {{ item|lower }} — строго и красиво.</p></div>
     </div>
-    <div class="menu-item">О КОМПАНИИ
-      <div class="dropdown-content">
-        <h2>О компании</h2>
-        <p>Легенда бренда, миссия, история — роскошь и ясность.</p>
-      </div>
-    </div>
-    <div class="menu-item">УЗЕЛ ВВОДА
-      <div class="dropdown-content">
-        <h2>Узел ввода</h2>
-        <p>Технические схемы и инструкции — строго и красиво.</p>
-      </div>
-    </div>
-    <div class="menu-item">ПРОЕКТИРОВАНИЕ BIM
-      <div class="dropdown-content">
-        <h2>Проектирование BIM</h2>
-        <p>Файлы, библиотеки, инструкции — технологично и элегантно.</p>
-      </div>
-    </div>
-    <div class="menu-item">БУТИК
-      <div class="dropdown-content">
-        <h2>Бутик</h2>
-        <p>Премиальные товары, фото, промо — изысканно.</p>
-      </div>
-    </div>
-    <div class="menu-item">МАГАЗИН
-      <div class="dropdown-content">
-        <h2>Магазин</h2>
-        <p>Карточки товаров, фильтры, кнопки — удобно и строго.</p>
-      </div>
-    </div>
+    {% endfor %}
   </div>
 </header>
 
-<main>
-  {% block content %}{% endblock %}
-</main>
+<!-- 🔥 Блок для fullscreen видео -->
+{% block video_fullscreen %}{% endblock %}
+
+<main>{% block content %}{% endblock %}</main>
 
 <footer>
   <div class="footer-content">
@@ -359,106 +119,25 @@
           <img src="{{ url_for('static', filename='images/vavip_logo_text.png') }}" alt="Vavip" />
         </div>
         <div class="social-icons">
-          <a href="#" aria-label="Telegram" class="social-icon telegram" title="Telegram">
-            <img src="{{ url_for('static', filename='images/icons/telegram.svg') }}" alt="Telegram">
-          </a>
-          <a href="#" aria-label="Instagram" class="social-icon instagram" title="Instagram">
-            <img src="{{ url_for('static', filename='images/icons/instagram.svg') }}" alt="Instagram">
-          </a>
-          <a href="#" aria-label="VK" class="social-icon vk" title="VK">
-            <img src="{{ url_for('static', filename='images/icons/vk.svg') }}" alt="VK">
-          </a>
-          <a href="#" aria-label="Pinterest" class="social-icon pinterest" title="Pinterest">
-            <img src="{{ url_for('static', filename='images/icons/pinterest.svg') }}" alt="Pinterest">
-          </a>
-          <a href="#" aria-label="YouTube" class="social-icon youtube" title="YouTube">
-            <img src="{{ url_for('static', filename='images/icons/youtube.svg') }}" alt="YouTube">
-          </a>
+          {% for name in ['telegram','instagram','vk','pinterest','youtube'] %}
+          <a href="#" class="social-icon {{ name }}"><img src="{{ url_for('static', filename='images/icons/' + name + '.svg') }}" alt="{{ name }}"></a>
+          {% endfor %}
         </div>
       </div>
-      <div class="copyright-text">
-        © 2024 Vavip. All Rights Reserved
-      </div>
+      <div class="copyright-text">© 2024 Vavip. All Rights Reserved</div>
     </div>
   </div>
 </footer>
 
 <script>
-  function alignDropdowns() {
-    const header = document.querySelector('header');
-    const headerHeight = header.offsetHeight;
-    document.querySelectorAll('.dropdown-content').forEach(dc => {
-      dc.style.top = headerHeight + 'px';
-    });
-  }
-  window.addEventListener('load', alignDropdowns);
-  window.addEventListener('resize', alignDropdowns);
-
-  document.querySelectorAll('.menu-item').forEach(item => {
-    const dropdown = item.querySelector('.dropdown-content');
-    let isHoveredMenu = false;
-    let isHoveredDropdown = false;
-    let hoverTimer;
-
-    item.addEventListener('click', (e) => {
-      e.stopPropagation();
-      const isShown = dropdown.classList.contains('show');
-
-      document.querySelectorAll('.dropdown-content.show').forEach(dc => {
-        if (dc !== dropdown) dc.classList.remove('show');
-      });
-
-      if (isShown) {
-        dropdown.classList.remove('show');
-      } else {
-        dropdown.classList.add('show');
-      }
-    });
-
-    item.addEventListener('mouseenter', () => {
-      isHoveredMenu = true;
-      hoverTimer = setTimeout(() => {
-        document.querySelectorAll('.dropdown-content.show').forEach(dc => {
-          if (dc !== dropdown) dc.classList.remove('show');
-        });
-        dropdown.classList.add('show');
-      }, 300);
-    });
-    item.addEventListener('mouseleave', () => {
-      isHoveredMenu = false;
-      clearTimeout(hoverTimer);
-      setTimeout(() => {
-        if (!isHoveredDropdown && !isHoveredMenu) {
-          dropdown.classList.remove('show');
-        }
-      }, 100);
-    });
-
-    dropdown.addEventListener('mouseenter', () => {
-      isHoveredDropdown = true;
-    });
-    dropdown.addEventListener('mouseleave', () => {
-      isHoveredDropdown = false;
-      setTimeout(() => {
-        if (!isHoveredDropdown && !isHoveredMenu) {
-          dropdown.classList.remove('show');
-        }
-      }, 100);
-    });
-  });
-
-  window.addEventListener('click', () => {
-    document.querySelectorAll('.dropdown-content.show').forEach(dc => {
-      dc.classList.remove('show');
-    });
-  });
-
-  window.addEventListener('scroll', () => {
-    document.querySelectorAll('.dropdown-content.show').forEach(dc => {
-      dc.classList.remove('show');
-    });
-  });
+function alignDropdowns(){document.querySelectorAll('.dropdown-content').forEach(dc=>dc.style.top=document.querySelector('header').offsetHeight+'px')}
+window.addEventListener('load',alignDropdowns)
+window.addEventListener('resize',alignDropdowns)
+document.querySelectorAll('.menu-item').forEach(item=>{const d=item.querySelector('.dropdown-content');let mh=false,dh=false,t;item.addEventListener('click',e=>{e.stopPropagation();document.querySelectorAll('.dropdown-content.show').forEach(dc=>{if(dc!==d)dc.classList.remove('show')});d.classList.toggle('show')});item.addEventListener('mouseenter',()=>{mh=true;t=setTimeout(()=>{document.querySelectorAll('.dropdown-content.show').forEach(dc=>{if(dc!==d)dc.classList.remove('show')});d.classList.add('show')},300)});item.addEventListener('mouseleave',()=>{mh=false;clearTimeout(t);setTimeout(()=>{if(!dh&&!mh)d.classList.remove('show')},100)});d.addEventListener('mouseenter',()=>{dh=true});d.addEventListener('mouseleave',()=>{dh=false;setTimeout(()=>{if(!dh&&!mh)d.classList.remove('show')},100)})})
+window.addEventListener('click',()=>{document.querySelectorAll('.dropdown-content.show').forEach(dc=>dc.classList.remove('show'))})
+window.addEventListener('scroll',()=>{document.querySelectorAll('.dropdown-content.show').forEach(dc=>dc.classList.remove('show'))})
 </script>
 
 </body>
 </html>
+/!
