@@ -1,9 +1,8 @@
 {% extends "layout.html" %}
+
 {% block title %}Главная страница Vavip{% endblock %}
 
-{% block video_fullscreen %}
-<style>
-/* Видео секции */
+{% block video_fullscreen %}<style>
 .video-section {
   position: relative;
   width: 100vw;
@@ -12,49 +11,70 @@
   scroll-snap-align: start;
 }
 
-.video-section video {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
+body.nav-open .video-section {
+  filter: blur(6px);
+  transition: filter 0.3s ease;
 }
 
-.video-section + .video-section { margin-top: -5vh; }
-
-/* Надписи на видео */
-.video-caption {
-  position: absolute;
-  bottom: 80px;
-  width: 100%;
-  text-align: center;
-  font-family: Helvetica, Arial, sans-serif;
-  font-weight: 200;
-  font-size: 1.2rem;
-  color: #fff;
-  text-shadow: 0 1px 6px rgba(0,0,0,0.5);
-  pointer-events: none;
-  opacity: 0.7;
-  transition: transform 0.3s, opacity 0.3s;
+/* Негативный отступ для «peek» следующего блока */
+.video-section + .video-section {
+  margin-top: -5vh;
 }
 
-.video-section.active .video-caption {
-  transform: translateY(-10px);
-  opacity: 1;
-}
-
-/* Scroll snap */
+/* Контейнер прокрутки + компенсация фиксированного header */
 html, body {
   height: 100%;
   margin: 0;
   scroll-behavior: smooth;
   scroll-snap-type: y mandatory;
-  overflow-y: scroll;
+  -webkit-overflow-scrolling: touch;
 }
 
-/* Футер поверх 4-го видео */
+html {
+  scroll-padding-top: var(--header-h, 0px);
+}
+
+.video-section video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+/* Видео 2, 3 и 4 чуть затемнены по умолчанию */
+.video-section:nth-of-type(n+2) video {
+  filter: brightness(0.1); /* затемнение */
+  transition: filter 2s ease; /* плавное изменение яркости */
+}
+
+/* Когда видео активно — светлеет */
+.video-section:nth-of-type(n+2).active video {
+  filter: brightness(1);
+}
+
+.video-caption {
+  position: absolute;
+  bottom: 80px;
+  left: 50%;
+  transform: translate(-50%, 40px);
+  font-family: Helvetica, Arial, sans-serif;
+  font-weight: 100;
+  font-size: 2rem;
+  color: #fff;
+  text-shadow: 0 1px 8px rgba(0,0,0,0.7);
+  pointer-events: none;
+  white-space: nowrap;
+  opacity: 0;
+  transition: opacity 1.5s ease, transform 1s ease;
+}
+
+.video-section.active .video-caption {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+
+/* Футер поверх 4-го видео с анимацией */
 .video-footer {
   position: absolute;
   bottom: 0;
@@ -62,38 +82,68 @@ html, body {
   left: 0;
   background-color: rgba(18, 20, 22, 0.95);
   z-index: 10;
+  opacity: 0;
+  transform: translateY(100%);
+  transition: opacity 0.4s ease, transform 0.4s ease;
+  display: none;
+  color: #fff; /* теперь весь текст внутри футера белый */
+}
+
+.video-footer.shown {
+  display: block;
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.video-footer.hidden {
+  opacity: 0;
+  transform: translateY(100%);
+}
+
+/* Стиль именно для надписи © */
+.copyright-text {
+  font-size: 0.9rem;
+  text-align: center;
+  margin-top: 10px;
+  color: #fff;
+}
+
+/* Уважаем prefers-reduced-motion */
+@media (prefers-reduced-motion: reduce){
+  html, body { scroll-behavior: auto; }
+  .video-caption { transition: none; }
+  .video-footer { transition: none; }
 }
 </style>
 
 <div class="video-section">
-  <video autoplay muted loop playsinline preload="auto" poster="{{ url_for('static', filename='images/video-poster.jpg') }}">
+  <video autoplay muted loop playsinline preload="metadata" aria-hidden="true" poster="{{ url_for('static', filename='images/video-poster.jpg') }}">
     <source src="{{ url_for('static', filename='videos/background1.mp4') }}" type="video/mp4">
   </video>
   <div class="video-caption">Узел ввода</div>
 </div>
 
 <div class="video-section">
-  <video autoplay muted loop playsinline preload="auto" poster="{{ url_for('static', filename='images/video-poster2.jpg') }}">
+  <video autoplay muted loop playsinline preload="metadata" aria-hidden="true" poster="{{ url_for('static', filename='images/video-poster2.jpg') }}">
     <source src="{{ url_for('static', filename='videos/background2.mp4') }}" type="video/mp4">
   </video>
   <div class="video-caption">Проектирование BIM</div>
 </div>
 
 <div class="video-section">
-  <video autoplay muted loop playsinline preload="auto" poster="{{ url_for('static', filename='images/video-poster3.jpg') }}">
+  <video autoplay muted loop playsinline preload="metadata" aria-hidden="true" poster="{{ url_for('static', filename='images/video-poster3.jpg') }}">
     <source src="{{ url_for('static', filename='videos/background3.mp4') }}" type="video/mp4">
   </video>
   <div class="video-caption">Бутик</div>
 </div>
 
 <div class="video-section">
-  <video autoplay muted loop playsinline preload="auto" poster="{{ url_for('static', filename='images/video-poster4.jpg') }}">
+  <video autoplay muted loop playsinline preload="metadata" aria-hidden="true" poster="{{ url_for('static', filename='images/video-poster4.jpg') }}">
     <source src="{{ url_for('static', filename='videos/background4.mp4') }}" type="video/mp4">
   </video>
   <div class="video-caption">Магазин</div>
 
-  <!-- Футер поверх 4-го видео -->
-  <footer class="video-footer">
+  <footer class="video-footer hidden">
     <div class="footer-content">
       <div class="columns">
         <div>
@@ -119,8 +169,14 @@ html, body {
             <img src="{{ url_for('static', filename='images/vavip_logo_text.png') }}" alt="Vavip" />
           </div>
           <div class="social-icons">
-            {% for name in ['telegram','instagram','vk','pinterest','youtube'] %}
-            <a href="#" class="social-icon {{ name }}"><img src="{{ url_for('static', filename='images/icons/' + name + '.svg') }}" alt="{{ name }}"></a>
+            {% for name, url in [('telegram', 'https://t.me/karen_vavip'), 
+                                ('instagram', 'https://instagram.com/karen_vavip'), 
+                                ('vk', 'https://vk.com/karen_vavip'), 
+                                ('pinterest', 'https://pinterest.com/karen_vavip'), 
+                                ('youtube', 'https://youtube.com/@karenvavip')] %}
+                <a href="{{ url }}" class="social-icon {{ name }}" target="_blank" rel="noopener noreferrer">
+                    <img src="{{ url_for('static', filename='images/icons/' + name + '.svg') }}" alt="{{ name }}">
+                </a>
             {% endfor %}
           </div>
         </div>
@@ -131,64 +187,122 @@ html, body {
 </div>
 
 <script>
-// Логика активного видео
 const videoSections = document.querySelectorAll('.video-section');
-function updateActiveVideo() {
-  const windowMiddle = window.innerHeight / 2;
-  videoSections.forEach(section => {
-    const rect = section.getBoundingClientRect();
-    const sectionMiddle = rect.top + rect.height / 2;
-    if (Math.abs(sectionMiddle - windowMiddle) < rect.height / 2) {
-      section.classList.add('active');
+const observerOptions = { root: null, rootMargin: '0px', threshold: 0.5 };
+
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('active');
+
+      if (entry.target === videoSections[3]) {
+        const footer = entry.target.querySelector('.video-footer');
+        if (footer) {
+          footer.classList.remove('shown');
+          footer.classList.add('hidden');
+          footer.style.display = 'none';
+        }
+        atBottomBeforeScroll = false;
+      } else {
+        const footer = videoSections[3].querySelector('.video-footer');
+        if (footer && footer.classList.contains('shown')) {
+          hideFooter(footer);
+        }
+        atBottomBeforeScroll = false;
+      }
     } else {
-      section.classList.remove('active');
+      entry.target.classList.remove('active');
     }
   });
+}, observerOptions);
+
+videoSections.forEach(section => observer.observe(section));
+
+function setScrollPaddingForHeader(){
+  const h = document.querySelector('header')?.offsetHeight || 0;
+  document.documentElement.style.setProperty('--header-h', h + 'px');
 }
-window.addEventListener('scroll', updateActiveVideo);
-window.addEventListener('resize', updateActiveVideo);
-updateActiveVideo();
+window.addEventListener('load', setScrollPaddingForHeader);
+window.addEventListener('resize', setScrollPaddingForHeader);
 
-// Блюр видео при открытии dropdown с задержкой
-const menuItems = document.querySelectorAll('.menu-item');
-menuItems.forEach(item => {
-  const dropdown = item.querySelector('.dropdown-content');
-  let hoverTimeout;
+const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+function applyReducedMotion(e){
+  if (e.matches){
+    document.querySelectorAll('.video-section video').forEach(v => {
+      v.removeAttribute('autoplay');
+      try { v.pause(); } catch(e){}
+      v.setAttribute('controls','');
+      v.preload = 'none';
+    });
+  }
+}
+applyReducedMotion(reduceMotion);
+reduceMotion.addEventListener?.('change', applyReducedMotion);
 
-  item.addEventListener('mouseenter', () => {
-    hoverTimeout = setTimeout(() => {
-      dropdown.classList.add('show');
-      videoSections.forEach(sec => sec.querySelector('video').style.filter = 'blur(5px)');
-    }, 300); // задержка перед выпадением
+function showFooter(footer){
+  footer.style.display = 'block';
+  requestAnimationFrame(() => {
+    footer.classList.remove('hidden');
+    footer.classList.add('shown');
   });
+}
 
-  item.addEventListener('mouseleave', () => {
-    clearTimeout(hoverTimeout);
-    setTimeout(() => {
-      if (!dropdown.matches(':hover')) {
-        dropdown.classList.remove('show');
-        videoSections.forEach(sec => sec.querySelector('video').style.filter = '');
+function hideFooter(footer){
+  footer.classList.remove('shown');
+  footer.classList.add('hidden');
+  footer.addEventListener('transitionend', () => {
+    if (footer.classList.contains('hidden')) {
+      footer.style.display = 'none';
+    }
+  }, { once: true });
+}
+
+let atBottomBeforeScroll = false;
+let scrollTimeout = null;
+
+function isNearBottom(){
+  const scrollY = window.scrollY || window.pageYOffset;
+  const viewportHeight = window.innerHeight;
+  const fullHeight = document.documentElement.scrollHeight;
+  return (scrollY + viewportHeight) >= (fullHeight - 5);
+}
+
+function handleScrollStop() {
+  const active = document.querySelector('.video-section.active');
+  if (active === videoSections[3]) {
+    const footer = active.querySelector('.video-footer');
+    if (!footer) return;
+
+    if (isNearBottom()) {
+      if (!atBottomBeforeScroll) {
+        atBottomBeforeScroll = true;
+      } else {
+        if (!footer.classList.contains('shown')) {
+          showFooter(footer);
+        }
       }
-    }, 50);
-  });
+    } else {
+      if (footer.classList.contains('shown')) {
+        hideFooter(footer);
+      }
+      atBottomBeforeScroll = false;
+    }
+  } else {
+    const footer = document.querySelector('.video-footer.shown');
+    if (footer) {
+      hideFooter(footer);
+    }
+    atBottomBeforeScroll = false;
+  }
+}
 
-  dropdown.addEventListener('mouseenter', () => {
-    clearTimeout(hoverTimeout);
-    dropdown.classList.add('show');
-    videoSections.forEach(sec => sec.querySelector('video').style.filter = 'blur(5px)');
-  });
-
-  dropdown.addEventListener('mouseleave', () => {
-    dropdown.classList.remove('show');
-    videoSections.forEach(sec => sec.querySelector('video').style.filter = '');
-  });
+window.addEventListener('scroll', () => {
+  if (scrollTimeout) clearTimeout(scrollTimeout);
+  scrollTimeout = setTimeout(handleScrollStop, 50);
 });
 </script>
 {% endblock %}
 
 {% block content %}
-<main>
-  <div style="height:100px;"></div>
-</main>
+<!-- Пустой блок -->
 {% endblock %}
-/

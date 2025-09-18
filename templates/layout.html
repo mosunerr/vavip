@@ -1,71 +1,408 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-<meta charset="UTF-8">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>{% block title %}Vavip{% endblock %}</title>
+
 <style>
-html,body{margin:0;padding:0;height:100%;background:#0a0a0a;color:#fff;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;box-sizing:border-box;overflow-x:hidden}
-*,*::before,*::after{box-sizing:inherit}
+html,body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  background: #0a0a0a;
+  color: #fff;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  box-sizing: border-box;
+  overflow-x: hidden;
+}
+*, *::before, *::after {
+  box-sizing: inherit;
+}
 
-/* Шапка и dropdown */
-header{position:fixed;top:0;left:0;width:100%;padding:5px 30px;z-index:1000;transition:0.6s;user-select:none}
-header:hover{background:#121416;border-bottom:0.5px solid rgba(255,255,255,0.1);box-shadow:0 0.5px 8px rgba(0,0,0,0.4)}
-.header-top,.header-left,.header-right,.header-center{display:flex;align-items:center}
-.header-top{justify-content:space-between;height:50px;color:#c0c0c0;margin-bottom:8px}
-.header-left{gap:28px;justify-content:flex-start}.header-right{gap:40px;justify-content:flex-end}.header-center{position:absolute;left:50%;transform:translateX(-50%)}
-.header-center img{height:100px;margin-top:10px}
-.location-icon,.header-right svg{width:22px;height:22px;stroke:#c0c0c0;fill:none;stroke-linecap:round;stroke-linejoin:round;cursor:pointer;transition:0.3s}
-.location-icon:hover,.header-right a:hover svg{stroke:#f0f0f0;transform:scale(1.2)}
-.phone-number a{color:#c0c0c0;text-decoration:none;font-family:Helvetica,Arial,sans-serif;font-weight:300;font-size:0.95rem;transition:0.3s}
-.phone-number a:hover{color:#f0f0f0}
-.center-divider{height:0.5px;width:100%;background:linear-gradient(to right,transparent 0%,#c0c0c0 15%,#c0c0c0 85%,transparent 100%)}
-.header-bottom{display:flex;justify-content:center;flex-wrap:wrap;padding:16px 40px 20px;gap:28px;font-family:Helvetica,Arial,sans-serif;font-weight:300;font-size:0.95rem;letter-spacing:0.05em;position:relative;z-index:1100}
-.menu-item{position:relative;cursor:pointer;padding:3px 6px;transition:0.3s;text-align:center}
-.menu-item:hover{color:#f0f0f0}
-.menu-item::after{content:'';position:absolute;bottom:0;left:0;height:2px;width:0;background:linear-gradient(to right,transparent,#999 50%,transparent);transition:width 1.5s}
-.menu-item:hover::after{width:100%}
-.dropdown-content{position:fixed;left:0;right:0;width:100%;height:80vh;background:#121416;color:#c0c0c0;overflow-y:auto;padding:40px 8vw;opacity:0;visibility:hidden;transform:translateY(-20px);transition:transform 1s cubic-bezier(.19,1,.22,1),opacity 1s,visibility 0s linear 1s;border-radius:0 0 4px 4px;top:0;z-index:1050}
-.dropdown-content.show{opacity:1;visibility:visible;transform:translateY(0);transition-delay:0s}
+header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  padding: 5px 30px;
+  z-index: 1000;
+  background-color: transparent;
+  box-shadow: none;
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+header:hover {
+  background-color: #121416;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+}
 
-/* Контент */
-main{max-width:1200px;width:100%;margin:0 auto;padding:40px;color:#fff;position:relative;z-index:10}
+.header-top, .header-left, .header-right, .header-center {
+  display: flex;
+  align-items: center;
+}
+.header-top {
+  justify-content: space-between;
+  height: 50px;
+  color: #c0c0c0;
+  margin-bottom: 8px;
+}
+.header-left { gap: 28px; }
+.header-right { gap: 40px; }
+.header-center {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+}
+.header-center img {
+  height: 100px;
+  margin-top: 10px;
+}
 
-/* Футер */
-footer{background-color:#121416;border-top:1px solid #2f3340;padding:15px 30px 30px;color:#96a0cb;display:flex;flex-direction:column;gap:16px;position:relative;z-index:10;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;text-transform:capitalize;width:100%}
-.footer-content{display:flex;flex-direction:column;gap:16px}
-.columns{display:flex;justify-content:flex-start;gap:48px;flex-wrap:nowrap;padding-top:32px;font-size:0.85rem;line-height:1.6;color:#c0c0c0}
-.columns>div{min-width:140px;display:flex;flex-direction:column;gap:10px}
-.columns strong{color:#f0f0f0;font-size:1.1rem;margin-bottom:8px;font-weight:600}
-.columns a{color:#a2a8bb;text-decoration:none;font-weight:400;transition:color 0.3s ease}
-.columns a:hover{color:#f0f0f0}
-.footer-divider{height:1px;width:100%;background:linear-gradient(to right,transparent 0%,#999 15%,#999 85%,transparent 100%);margin-top:32px;margin-bottom:24px;opacity:0.5}
-.footer-bottom-wrapper{display:flex;justify-content:space-between;align-items:center;gap:24px}
-.footer-bottom{display:flex;align-items:center;gap:20px}
-.vertical-text-footer img{height:1rem;display:block;margin-right:15px;user-select:none}
-.social-icons{display:flex;flex-direction:row;gap:18px}
-.social-icon img{width:22px;height:22px;cursor:pointer;transition:transform 0.3s ease,filter 0.3s ease;filter:brightness(1)}
-.social-icon:hover img{transform:scale(1.2);filter:brightness(1.3)}
-.social-icon.telegram img,.social-icon.instagram img,.social-icon.vk img,.social-icon.pinterest img,.social-icon.youtube img{width:20px!important;height:23px!important}
-.copyright-text{font-size:0.75rem;color:#c0c0c0;white-space:nowrap;user-select:none;flex-shrink:0;margin-left:0}
+.location-icon, .header-right svg {
+  width: 22px;
+  height: 22px;
+  stroke: #c0c0c0;
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  cursor: pointer;
+  transition: .3s;
+}
+.location-icon:hover, .header-right a:hover svg {
+  stroke: #f0f0f0;
+  transform: scale(1.2);
+}
+.phone-number a {
+  color: #c0c0c0;
+  text-decoration: none;
+  font-family: Helvetica, Arial, sans-serif;
+  font-weight: 300;
+  font-size: 0.95rem;
+  transition: .3s;
+}
+.phone-number a:hover {
+  color: #f0f0f0;
+}
+.center-divider {
+  height: 0.5px;
+  width: 100%;
+  background: linear-gradient(to right, transparent 0%, #c0c0c0 15%, #c0c0c0 85%, transparent 100%);
+}
+.header-bottom {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  padding: 16px 40px 20px;
+  gap: 28px;
+  font-family: Helvetica, Arial, sans-serif;
+  font-weight: 300;
+  font-size: 0.95rem;
+  letter-spacing: 0.05em;
+  position: relative;
+  z-index: 1100;
+}
+.menu-item-button {
+  cursor: pointer;
+  padding: 8px 18px;
+  background: none;
+  border: none;
+  color: #c0c0c0;
+  font: inherit;
+  transition: color .25s ease;
+}
+.menu-item-button:focus-visible {
+  outline: 2px solid #9ec1ff;
+  outline-offset: 2px;
+}
+.menu-item-button .menu-label {
+  position: relative;
+  cursor: pointer;
+  display: inline-block;
+  padding: 2px 0;
+}
 
-  /* Убираем видимый скроллбар, но прокрутка работает */
-  body {
-    scrollbar-width: none; /* для Firefox */
-    -ms-overflow-style: none; /* для IE и Edge */
+/* —————————————————————————————
+   underline : only for active item
+   animated from center with transform scaleX
+   ————————————————————————————— */
+.menu-item-button .menu-label::after {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  left: 0;
+  height: 2px;
+  width: 100%;                    /* full width, but hidden via scaleX */
+  transform-origin: center;
+  transform: scaleX(0);           /* collapsed by default */
+  background: linear-gradient(to right, transparent, #999 50%, transparent);
+  transition: transform 0.5s cubic-bezier(.4, 0, .6, 1);  /* Быстрый */
+  /* transition: transform 0.35s ease-out;   /* Плавный */
+  /*transition: transform 0.45s cubic-bezier(.25, 1, .3, 1);   /* Элегантный */
+  pointer-events: none;
+}
+
+/* active item: white + underline visible */
+.menu-item-button.active {
+  color: #f0f0f0;
+}
+.menu-item-button.active .menu-label::after {
+  transform: scaleX(1);
+}
+
+/* dim non-active items */
+.menu-item-button.inactive {
+  color: #555;
+}
+
+/* PANEL ↓↓↓ */
+:root {
+  --dropdown-speed: 0.45s;
+}
+.dropdown-content {
+  position: fixed;
+  left: 0;
+  right: 0;
+  width: 100%;
+  height: 63.5vh; /*высота dropdown*/
+  background: #121416;
+  color: #c0c0c0;
+  overflow-y: auto;
+  padding-top: 60px;
+  padding-bottom: 60px;
+  visibility: hidden;
+  opacity: 0;
+  transform: translateY(-6px);
+  transition: opacity var(--dropdown-speed) ease, transform var(--dropdown-speed) ease;
+  border-radius: 0 0 4px 4px;
+  top: var(--header-h, 0);
+  z-index: 1050;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+.dropdown-content.show {
+  visibility: visible;
+  opacity: 1;
+  transform: translateY(0);
+}
+.dropdown-inner {
+  position: relative;
+}
+.dropdown-left {
+  position: absolute;
+  top: 0;
+  left: var(--menu-x, 40px);
+  min-width: 330px;
+  background: none;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+.dropdown-left h2 {
+  margin: 0 0 18px 0;
+  color: #c0c0c0;
+  font-size: 2rem;
+  font-weight: 700;
+}
+.dropdown-left ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.dropdown-left li {
+  margin-bottom: 10px;
+  font-size: 1rem;
+}
+.dropdown-right {
+  position: absolute;
+  top: 0;
+  left: calc(var(--menu-x, 40px) + 350px);
+  width: 300px;
+  max-width: 30vw;
+}
+.dropdown-right img {
+  width: 100%;
+  height: auto;
+  border-radius: 4px;
+  object-fit: cover;
+}
+
+body.nav-open header {
+  background: #121416;
+  box-shadow: none;
+}
+body.nav-open header:hover {
+  box-shadow: none;
+}
+
+main {
+  max-width: 1200px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 0;
+  color: #fff;
+  position: relative;
+  z-index: 10;
+}
+main:empty {
+  display: none;
+}
+
+footer {
+  background-color: #121416;
+  border-top: 1px solid #2f3340;
+  padding: 15px 30px 30px;
+  color: #96a0cb;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  position: relative;
+  z-index: 10;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  text-transform: capitalize;
+  width: 100%;
+}
+.footer-content {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.columns {
+  display: flex;
+  justify-content: flex-start;
+  gap: 48px;
+  flex-wrap: nowrap;
+  padding-top: 32px;
+  font-size: 0.85rem;
+  line-height: 1.6;
+  color: #c0c0c0;
+}
+.columns > div {
+  min-width: 140px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.columns strong {
+  color: #f0f0f0;
+  font-size: 1.1rem;
+  margin-bottom: 8px;
+  font-weight: 600;
+}
+.columns a {
+  color: #a2a8bb;
+  text-decoration: none;
+  font-weight: 400;
+  transition: color 0.3s ease;
+}
+.columns a:hover {
+  color: #f0f0f0;
+}
+.footer-divider {
+  height: 1px;
+  width: 100%;
+  background: linear-gradient(to right, transparent 0%, #999 15%, #999 85%, transparent 100%);
+  margin-top: 32px;
+  margin-bottom: 24px;
+  opacity: 0.5;
+}
+.footer-bottom-wrapper {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 24px;
+}
+.footer-bottom {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+.vertical-text-footer img {
+  height: 1rem;
+  display: block;
+  margin-right: 15px;
+  user-select: none;
+}
+.social-icons {
+  display: flex;
+  flex-direction: row;
+  gap: 18px;
+}
+.social-icon img {
+  width: 22px;
+  height: 22px;
+  cursor: pointer;
+  transition: transform 0.3s ease, filter 0.3s ease;
+  filter: brightness(1);
+}
+.social-icon:hover img {
+  transform: scale(1.2);
+  filter: brightness(1.3);
+}
+.social-icon.telegram img, .social-icon.instagram img, .social-icon.vk img, .social-icon.pinterest img, .social-icon.youtube img {
+  width: 20px !important;
+  height: 23px !important;
+}
+copyright-text {
+  font-size: 0.75rem;
+  color: #c0c0c0;
+  white-space: nowrap;
+  user-select: none;
+  flex-shrink: 0;
+  margin-left: 0;
+}
+
+body {
+  scrollbar-width: thin;
+}
+body::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+body::-webkit-scrollbar-thumb {
+  background-color: rgba(255, 255, 255, 0.25);
+  border-radius: 4px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation: none !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
   }
-  body::-webkit-scrollbar {
-    display: none; /* для Chrome, Safari, Opera */
-  }
+}
 
+.skip-link {
+  position: absolute;
+  left: -9999px;
+  top: auto;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+.skip-link:focus {
+  position: fixed;
+  left: 16px;
+  top: 12px;
+  width: auto;
+  height: auto;
+  background: #121416;
+  color: #fff;
+  padding: 10px 14px;
+  border-radius: 6px;
+  z-index: 2000;
+}
 </style>
 </head>
 <body>
+<a class="skip-link" href="#main-content">Перейти к основному содержанию</a>
 
 <header>
   <div class="header-top">
     <div class="header-left">
-      <svg class="location-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5A2.5 2.5 0 1114.5 9 2.5 2.5 0 0112 11.5z"/></svg>
-      <div class="phone-number"><a href="tel:89312487013">8 931 248 70 13</a></div>
+      <svg class="location-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5A2.5 2.5 0 1114.5 9 2.5 2.5 0 0112 11.5z"/></svg>
+      <div class="phone-number"><a href="tel:+79312487013">+7 931 248 70 13</a></div>
     </div>
     <div class="header-center">
       <a href="{{ url_for('main_home') }}"><img src="{{ url_for('static', filename='images/logo.png') }}" alt="Логотип Vavip"/></a>
@@ -76,68 +413,269 @@ footer{background-color:#121416;border-top:1px solid #2f3340;padding:15px 30px 3
       <a href="#" aria-label="Личный кабинет"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 8-4 8-4s8 0 8 4"/></svg></a>
     </div>
   </div>
-
   <div class="center-divider"></div>
 
-  <div class="header-bottom">
-    {% for item in ['КОНТАКТЫ','О КОМПАНИИ','УЗЕЛ ВВОДА','ПРОЕКТИРОВАНИЕ BIM','БУТИК','МАГАЗИН'] %}
-    <div class="menu-item">{{ item }}
-      <div class="dropdown-content"><h2>{{ item }}</h2><p>Информация о {{ item|lower }} — строго и красиво.</p></div>
+<nav class="header-bottom" role="navigation" aria-label="Главное меню">
+  {% for item in ['КОНТАКТЫ','О КОМПАНИИ','УЗЕЛ ВВОДА','ПРОЕКТИРОВАНИЕ BIM','БУТИК','МАГАЗИН'] %}
+    <div style="position:relative;">
+      <button class="menu-item-button" aria-haspopup="true" aria-expanded="false" aria-controls="menu-panel-{{ loop.index }}">
+        <span class="menu-label">{{ item }}</span>
+      </button>
+      <span class="menu-underline" aria-hidden="true"></span>
+
+      <!-- Дропдаун -->
+      <div id="menu-panel-{{ loop.index }}" class="dropdown-content" role="region" aria-labelledby="menu-heading-{{ loop.index }}" hidden>
+        <!-- Абсолютная ссылка на всю панель -->
+        <a href="{% if item == 'УЗЕЛ ВВОДА' %}/catalog{% else %}#{% endif %}" class="dropdown-link"
+           style="text-decoration:none; color:inherit; position:absolute; inset:0; z-index:1;"></a>
+
+        <div class="dropdown-inner" style="position:relative; z-index:2;">
+          <div class="dropdown-left">
+            <h2 id="menu-heading-{{ loop.index }}">{{ item }}</h2>
+            {% if item == 'УЗЕЛ ВВОДА' %}
+              <ul>
+                <li>Строка 1: Описание узла ввода.</li>
+                <li>Строка 2: Преимущества продукта.</li>
+                <li>Строка 3: Технические характеристики.</li>
+                <li>Строка 4: Инструкция по установке.</li>
+                <li>Строка 5: Где купить.</li>
+              </ul>
+            {% else %}
+              <p>Информация о {{ item|lower }} — строго и красиво.</p>
+            {% endif %}
+          </div>
+          <div class="dropdown-right">
+            {% if item == 'УЗЕЛ ВВОДА' %}
+              <img src="{{ url_for('static', filename='images/uzel-vvoda-photo.jpg') }}" alt="Фото узла ввода" />
+            {% else %}
+              <img src="{{ url_for('static', filename='images/placeholder.jpg') }}" alt="Фото для {{ item }}" />
+            {% endif %}
+          </div>
+        </div>
+      </div>
     </div>
-    {% endfor %}
-  </div>
+  {% endfor %}
+</nav>
+
 </header>
 
-<!-- 🔥 Блок для fullscreen видео -->
 {% block video_fullscreen %}{% endblock %}
-
-<main>{% block content %}{% endblock %}</main>
-
-<footer>
-  <div class="footer-content">
-    <div class="columns">
-      <div>
-        <strong>КОНФИДЕЦИАЛЬНОСТЬ И УСЛОВИЯ</strong>
-        <a href="#">ПОЛИТИКА ОБРАБОТКИ И ЗАЩИТЫ ПЕРСОНАЛЬНЫХ ДАННЫХ И ИСПОЛЬЗОВАНИЯ COOKIE</a>
-        <a href="#">ДОГОВОР ОФЕРТЫ БИМ</a>
-        <a href="#">ГАРАНТИЯ</a>
-        <a href="#">ДОГОВОР НА ПРОЕКТИРОВАНИЕ ИНЖЕНЕРНЫХ СИСТЕМ</a>
-      </div>
-      <div>
-        <strong>СОТРУДНИЧЕСТВО</strong>
-        <a href="#">ДИЗАЙНЕРАМ И АРХИТЕКТОРАМ</a>
-        <a href="#">РУКОВОДИТЕЛЯМ СТРОИТЕЛЬНЫХ КОМПАНИЙ И ПРОЕКТОВ</a>
-        <a href="#">ДИСТРИБЬЮТОРАМ</a>
-      </div>
-    </div>
-
-    <div class="footer-divider"></div>
-
-    <div class="footer-bottom-wrapper">
-      <div class="footer-bottom">
-        <div class="vertical-text-footer">
-          <img src="{{ url_for('static', filename='images/vavip_logo_text.png') }}" alt="Vavip" />
-        </div>
-        <div class="social-icons">
-          {% for name in ['telegram','instagram','vk','pinterest','youtube'] %}
-          <a href="#" class="social-icon {{ name }}"><img src="{{ url_for('static', filename='images/icons/' + name + '.svg') }}" alt="{{ name }}"></a>
-          {% endfor %}
-        </div>
-      </div>
-      <div class="copyright-text">© 2024 Vavip. All Rights Reserved</div>
-    </div>
-  </div>
-</footer>
+<main id="main-content" tabindex="-1">{% block content %}{% endblock %}</main>
 
 <script>
-function alignDropdowns(){document.querySelectorAll('.dropdown-content').forEach(dc=>dc.style.top=document.querySelector('header').offsetHeight+'px')}
-window.addEventListener('load',alignDropdowns)
-window.addEventListener('resize',alignDropdowns)
-document.querySelectorAll('.menu-item').forEach(item=>{const d=item.querySelector('.dropdown-content');let mh=false,dh=false,t;item.addEventListener('click',e=>{e.stopPropagation();document.querySelectorAll('.dropdown-content.show').forEach(dc=>{if(dc!==d)dc.classList.remove('show')});d.classList.toggle('show')});item.addEventListener('mouseenter',()=>{mh=true;t=setTimeout(()=>{document.querySelectorAll('.dropdown-content.show').forEach(dc=>{if(dc!==d)dc.classList.remove('show')});d.classList.add('show')},300)});item.addEventListener('mouseleave',()=>{mh=false;clearTimeout(t);setTimeout(()=>{if(!dh&&!mh)d.classList.remove('show')},100)});d.addEventListener('mouseenter',()=>{dh=true});d.addEventListener('mouseleave',()=>{dh=false;setTimeout(()=>{if(!dh&&!mh)d.classList.remove('show')},100)})})
-window.addEventListener('click',()=>{document.querySelectorAll('.dropdown-content.show').forEach(dc=>dc.classList.remove('show'))})
-window.addEventListener('scroll',()=>{document.querySelectorAll('.dropdown-content.show').forEach(dc=>dc.classList.remove('show'))})
+/* ===== header sizing & dropdown positioning (как было) ===== */
+function setHeaderVars(){
+  const bottom = document.querySelector('.header-bottom');
+  if (bottom) {
+    const rect = bottom.getBoundingClientRect();
+    const h = rect.bottom + window.scrollY; // абсолютная позиция в документе
+    document.documentElement.style.setProperty('--header-h', h + 'px');
+  }
+}
+window.addEventListener('load', setHeaderVars);
+window.addEventListener('resize', setHeaderVars);
+
+function setDropdownX() {
+  const firstBtn = document.querySelector('.menu-item-button');
+  if (!firstBtn) return;
+  const rect = firstBtn.getBoundingClientRect();
+  const left = rect.left;
+  document.querySelectorAll('.dropdown-left').forEach(bl => {
+    bl.style.left = left + 'px';
+  });
+  document.querySelectorAll('.dropdown-right').forEach(br => {
+    br.style.left = (left + 350) + 'px';
+  });
+}
+document.querySelectorAll('.menu-item-button').forEach(btn=>{
+  btn.addEventListener('mouseenter', ()=>setTimeout(setDropdownX, 30));
+  btn.addEventListener('click', ()=>setTimeout(setDropdownX, 30));
+});
+window.addEventListener('resize', ()=>setTimeout(setDropdownX, 30));
+
+/* ===== improved menu highlight + dropdown open/close logic ===== */
+const buttons = document.querySelectorAll('.menu-item-button');
+let closeTimer = null;
+let openTimer = null;
+let openPanelBtn = null;
+let openPanelContent = null;
+
+/* highlightActive: делает пункт активным (white + underline), остальные — тусклыми */
+function highlightActive(btn){
+  buttons.forEach(b => b.classList.remove('active','inactive'));
+  if (!btn) return;
+  btn.classList.add('active');
+  buttons.forEach(b => {
+    if (b !== btn) b.classList.add('inactive');
+  });
+}
+
+/* clearHighlight: убирает все классы подсветки */
+function clearHighlight(){
+  buttons.forEach(b => b.classList.remove('active','inactive'));
+}
+
+/* openPanel: аккуратно открывает панель, обновляет aria и подсветку */
+function openPanel(btn, panel){
+  clearTimeout(closeTimer);
+  clearTimeout(openTimer);
+
+  // если та же панель уже открыта — просто подсвечиваем
+  if (openPanelBtn === btn && openPanelContent === panel) {
+    highlightActive(btn);
+    return;
+  }
+
+  // если открыта другая панель — скрываем её сразу (без полного сброса подсветки)
+  if (openPanelContent && openPanelContent !== panel) {
+    openPanelContent.classList.remove('show');
+    openPanelContent.hidden = true;
+  }
+
+  openPanelBtn = btn;
+  openPanelContent = panel;
+
+  // aria
+  buttons.forEach(b => b.setAttribute('aria-expanded','false'));
+  if (btn) btn.setAttribute('aria-expanded', 'true');
+
+  // show with requestAnimationFrame чтобы анимация сработала корректно
+  if (panel) {
+    panel.hidden = false;
+    requestAnimationFrame(() => panel.classList.add('show'));
+  }
+
+  setDropdownX();
+  document.body.classList.add('nav-open');
+
+  // подсветка: активный пункт + остальные тусклые
+  highlightActive(btn);
+}
+
+/* closeAll: закрывает всё, сбрасывает подсветку */
+function closeAll(){
+  clearTimeout(closeTimer);
+  clearTimeout(openTimer);
+
+  // aria
+  buttons.forEach(b => b.setAttribute('aria-expanded','false'));
+
+  if (openPanelContent) {
+    openPanelContent.classList.remove('show');
+    // скрываем после короткой задержки, чтобы animation/transition завершились
+    setTimeout(() => {
+      if (openPanelContent) openPanelContent.hidden = true;
+      openPanelContent = null;
+      openPanelBtn = null;
+    }, 220);
+  } else {
+    openPanelBtn = null;
+    openPanelContent = null;
+  }
+
+  document.body.classList.remove('nav-open');
+
+  // снимаем подсветку
+  clearHighlight();
+}
+
+/* Перехват событий для каждой кнопки и панели. Логика:
+   - mouseenter на кнопке: сразу подсвечиваем этот пункт; через short delay открываем панель
+   - mouseleave: стартуем таймер на closeAll, но если панель или любая другая кнопка попадёт в hover — таймер отменяется
+   - mouseenter на панели: отменяем таймер и держим подсветку
+   - mouseleave панели: запускаем closeTimer
+   - клик по кнопке: открывает/закрывает панель мгновенно (toggle)
+*/
+buttons.forEach(btn => {
+  const id = btn.getAttribute('aria-controls');
+  const panel = document.getElementById(id);
+
+  // при наведении — подсвечиваем пункт мгновенно и планируем открыть панель
+  btn.addEventListener('mouseenter', () => {
+    clearTimeout(closeTimer);
+    clearTimeout(openTimer);
+
+    // подсветка сразу, чтобы пользователь видел реакцию UI
+    highlightActive(btn);
+
+    // через небольшую задержку открываем панель (чтобы избежать лишних фликеров при быстром движении)
+    openTimer = setTimeout(() => {
+      openPanel(btn, panel);
+    }, 150);
+  });
+
+  // уходим с кнопки: планируем закрытие только если не в панеле
+  btn.addEventListener('mouseleave', () => {
+    clearTimeout(openTimer);
+
+    closeTimer = setTimeout(() => {
+      if (!panel.matches(':hover') && !btn.matches(':hover')) {
+        closeAll();
+      } else {
+        // если панель всё ещё в ховере, оставляем подсветку соответствующей кнопке
+        highlightActive(btn);
+      }
+    }, 200);
+  });
+
+  // клик переключает панель (toggle)
+  btn.addEventListener('click', e => {
+    e.stopPropagation();
+    const expanded = btn.getAttribute('aria-expanded') === 'true';
+    if (expanded) {
+      closeAll();
+    } else {
+      openPanel(btn, panel);
+    }
+  });
+
+  // keyboard: Esc закрывает; ArrowDown фокусирует панель при открытой панели
+  btn.addEventListener('keydown', e => {
+    if (e.key === 'Escape') { closeAll(); btn.focus(); }
+    if (e.key === 'ArrowDown') {
+      if (panel && !panel.hidden) {
+        // пытаемся фокусировать первый фокусируемый элемент внутри панели (если есть)
+        const focusable = panel.querySelector('a, button, input, [tabindex]:not([tabindex="-1"])');
+        if (focusable) focusable.focus({preventScroll:true});
+        else panel.focus?.({preventScroll:true});
+      } else {
+        // если панель закрыта — открыть её
+        openPanel(btn, panel);
+      }
+    }
+  });
+
+  // панель: при входе мышью — отменяем таймер закрытия и держим подсветку кнопки
+  if (panel) {
+    panel.addEventListener('mouseenter', () => {
+      clearTimeout(closeTimer);
+      // сохраняем подсветку у связанной кнопки
+      highlightActive(btn);
+    });
+
+    panel.addEventListener('mouseleave', () => {
+      // если уходят из панели — планируем закрытие
+      closeTimer = setTimeout(() => {
+        if (!btn.matches(':hover') && !panel.matches(':hover')) closeAll();
+      }, 200);
+    });
+  }
+});
+
+/* глобальные обработчики: клик вне меню, скролл, Esc */
+window.addEventListener('click', (e) => {
+  // если клик не по меню и не по панели — закрываем
+  const isInsideMenu = e.target.closest('.header-bottom, .dropdown-content, .menu-item-button, .menu-label');
+  if (!isInsideMenu) closeAll();
+});
+window.addEventListener('scroll', () => {
+  // при скролле закрываем меню
+  closeAll();
+});
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') closeAll();
+});
 </script>
 
 </body>
 </html>
-/!
