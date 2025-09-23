@@ -9,6 +9,7 @@
   height: 100vh;
   overflow: hidden;
   scroll-snap-align: start;
+  scroll-snap-stop: always;
 }
 
 body.nav-open .video-section {
@@ -16,18 +17,17 @@ body.nav-open .video-section {
   transition: filter 0.3s ease;
 }
 
-/* Негативный отступ для «peek» следующего блока */
+/* Небольшой «peek» следующего блока */
 .video-section + .video-section {
   margin-top: -5vh;
 }
 
 /* Контейнер прокрутки + компенсация фиксированного header */
 html, body {
-  height: 100%;
   margin: 0;
   scroll-behavior: smooth;
   scroll-snap-type: y mandatory;
-  -webkit-overflow-scrolling: touch;
+  -webkit-overflow-scrolling: auto;
 }
 
 html {
@@ -42,20 +42,29 @@ html {
   object-fit: cover;
   display: block;
 }
-/* Видео 2, 3 и 4 чуть затемнены по умолчанию */
-.video-section:nth-of-type(n+2) video {
-  filter: brightness(0.1); /* затемнение */
-  transition: filter 2s ease; /* плавное изменение яркости */
+
+/* Кликабельный оверлей-ссылка по всей секции (используется на 1-й) */
+.video-section .section-link {
+  position: absolute;
+  inset: 0;          /* покрыть всю секцию */
+  z-index: 6;        /* выше видео и подписи */
+  display: block;
+  cursor: pointer;
+  background: transparent;
 }
 
-/* Когда видео активно — светлеет */
+/* Видео 2, 3 и 4 затемнены, активное — светлеет */
+.video-section:nth-of-type(n+2) video {
+  filter: brightness(0.1);
+  transition: filter 2s ease;
+}
 .video-section:nth-of-type(n+2).active video {
   filter: brightness(1);
 }
 
 .video-caption {
   position: absolute;
-  bottom: 80px;
+  bottom: 90px;
   left: 50%;
   transform: translate(-50%, 40px);
   font-family: Helvetica, Arial, sans-serif;
@@ -66,29 +75,34 @@ html {
   pointer-events: none;
   white-space: nowrap;
   opacity: 0;
-  transition: opacity 1.5s ease, transform 1s ease;
+  transition: opacity 3s ease, transform 2s ease;
 }
-
 .video-section.active .video-caption {
   opacity: 1;
   transform: translate(-50%, 0);
 }
 
-/* Футер поверх 4-го видео с анимацией */
+/* Футер поверх 4-го видео */
 .video-footer {
   position: absolute;
   bottom: 0;
   width: 100%;
   left: 0;
-  background-color: rgba(18, 20, 22, 0.95);
+  background-color: #121416;
   z-index: 10;
   opacity: 0;
   transform: translateY(100%);
   transition: opacity 0.4s ease, transform 0.4s ease;
   display: none;
-  color: #fff; /* теперь весь текст внутри футера белый */
+  color: #fff;
 }
-
+/* Когда футер открыт — скрыть подпись "МАГАЗИН" на 4-й секции */
+body.footer-visible #fourth-section .video-caption {
+  opacity: 0;                 
+  transform: translate(-50%, 10px);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  pointer-events: none;
+}
 .video-footer.shown {
   display: block;
   opacity: 1;
@@ -100,7 +114,7 @@ html {
   transform: translateY(100%);
 }
 
-/* Стиль именно для надписи © */
+/* © */
 .copyright-text {
   font-size: 0.9rem;
   text-align: center;
@@ -114,36 +128,49 @@ html {
   .video-caption { transition: none; }
   .video-footer { transition: none; }
 }
+
+/* При видимом футере: полностью блокируем прокрутку страницы */
+body.footer-visible{
+  overflow: hidden !important;
+  touch-action: none !important;
+  overscroll-behavior: none !important;
+}
 </style>
 
 <div class="video-section">
   <video autoplay muted loop playsinline preload="metadata" aria-hidden="true" poster="{{ url_for('static', filename='images/video-poster.jpg') }}">
     <source src="{{ url_for('static', filename='videos/background1.mp4') }}" type="video/mp4">
   </video>
-  <div class="video-caption">Узел ввода</div>
+  <div class="video-caption">УЗЕЛ ВВОДА</div>
+  <!-- Кликабельный оверлей на весь первый видеоблок -->
+  <a class="section-link"
+     href="http://127.0.0.1:5002/catalog"
+     target="_self"
+     rel="noopener"
+     aria-label="Перейти в каталог"></a>
 </div>
 
 <div class="video-section">
   <video autoplay muted loop playsinline preload="metadata" aria-hidden="true" poster="{{ url_for('static', filename='images/video-poster2.jpg') }}">
     <source src="{{ url_for('static', filename='videos/background2.mp4') }}" type="video/mp4">
   </video>
-  <div class="video-caption">Проектирование BIM</div>
+  <div class="video-caption">ПРОЕКТИРОВАНИЕ BIM</div>
 </div>
 
 <div class="video-section">
   <video autoplay muted loop playsinline preload="metadata" aria-hidden="true" poster="{{ url_for('static', filename='images/video-poster3.jpg') }}">
     <source src="{{ url_for('static', filename='videos/background3.mp4') }}" type="video/mp4">
   </video>
-  <div class="video-caption">Бутик</div>
+  <div class="video-caption">БУТИК</div>
 </div>
 
-<div class="video-section">
+<div class="video-section" id="fourth-section">
   <video autoplay muted loop playsinline preload="metadata" aria-hidden="true" poster="{{ url_for('static', filename='images/video-poster4.jpg') }}">
     <source src="{{ url_for('static', filename='videos/background4.mp4') }}" type="video/mp4">
   </video>
-  <div class="video-caption">Магазин</div>
+  <div class="video-caption">МАГАЗИН</div>
 
-  <footer class="video-footer hidden">
+  <footer class="video-footer hidden" id="video-footer">
     <div class="footer-content">
       <div class="columns">
         <div>
@@ -169,14 +196,14 @@ html {
             <img src="{{ url_for('static', filename='images/vavip_logo_text.png') }}" alt="Vavip" />
           </div>
           <div class="social-icons">
-            {% for name, url in [('telegram', 'https://t.me/karen_vavip'), 
-                                ('instagram', 'https://instagram.com/karen_vavip'), 
-                                ('vk', 'https://vk.com/karen_vavip'), 
-                                ('pinterest', 'https://pinterest.com/karen_vavip'), 
-                                ('youtube', 'https://youtube.com/@karenvavip')] %}
-                <a href="{{ url }}" class="social-icon {{ name }}" target="_blank" rel="noopener noreferrer">
-                    <img src="{{ url_for('static', filename='images/icons/' + name + '.svg') }}" alt="{{ name }}">
-                </a>
+            {% for name, url in [('telegram', 'https://t.me/karen_vavip'),
+                                 ('instagram', 'https://instagram.com/karen_vavip'),
+                                 ('vk', 'https://vk.com/karen_vavip'),
+                                 ('pinterest', 'https://pinterest.com/karen_vavip'),
+                                 ('youtube', 'https://youtube.com/@karenvavip')] %}
+              <a href="{{ url }}" class="social-icon {{ name }}" target="_blank" rel="noopener noreferrer">
+                <img src="{{ url_for('static', filename='images/icons/' + name + '.svg') }}" alt="{{ name }}">
+              </a>
             {% endfor %}
           </div>
         </div>
@@ -188,36 +215,64 @@ html {
 
 <script>
 const videoSections = document.querySelectorAll('.video-section');
-const observerOptions = { root: null, rootMargin: '0px', threshold: 0.5 };
+const fourth = document.getElementById('fourth-section');
+const footer = document.getElementById('video-footer');
 
+/* Состояния для 4-й секции */
+let footerOpen = false;
+let fourthArmed = false;               // можно ли показывать футер
+let fourthReadyToShow = false;         // короткая "grace" после арминга
+let fourthFirstDownConsumed = false;   // первый "вниз" после арминга игнорируем
+let fourthArmTimer = 0;
+let fourthReadyTimer = 0;
+
+/* Функции арминга */
+function armFourthAfterScrollEnd(){
+  fourthArmed = true;
+  clearTimeout(fourthReadyTimer);
+  fourthReadyToShow = false;
+  fourthReadyTimer = setTimeout(() => { fourthReadyToShow = true; }, 140);
+}
+function rearmFourth(){
+  // Локальный пере-арм после скрытия футера на 4-й секции (без ухода со слайда)
+  fourthArmed = true;
+  fourthFirstDownConsumed = false;
+  clearTimeout(fourthReadyTimer);
+  fourthReadyToShow = false;
+  fourthReadyTimer = setTimeout(() => { fourthReadyToShow = true; }, 140);
+}
+function resetFourthState(){
+  fourthArmed = false;
+  fourthReadyToShow = false;
+  fourthFirstDownConsumed = false;
+  clearTimeout(fourthArmTimer);
+  clearTimeout(fourthReadyTimer);
+}
+
+/* Активатор секций + арминг 4-й */
+const observerOptions = { root: null, rootMargin: '0px', threshold: 0.5 };
 const observer = new IntersectionObserver((entries) => {
   entries.forEach(entry => {
     if (entry.isIntersecting) {
       entry.target.classList.add('active');
-
-      if (entry.target === videoSections[3]) {
-        const footer = entry.target.querySelector('.video-footer');
-        if (footer) {
-          footer.classList.remove('shown');
-          footer.classList.add('hidden');
-          footer.style.display = 'none';
-        }
-        atBottomBeforeScroll = false;
-      } else {
-        const footer = videoSections[3].querySelector('.video-footer');
-        if (footer && footer.classList.contains('shown')) {
-          hideFooter(footer);
-        }
-        atBottomBeforeScroll = false;
+      if (entry.target === fourth) {
+        resetFourthState();
+        // Арминг после завершения снапа/скролла + фолбэк-таймер
+        document.addEventListener('scrollend', armFourthAfterScrollEnd, { once: true });
+        fourthArmTimer = setTimeout(armFourthAfterScrollEnd, 420);
       }
     } else {
       entry.target.classList.remove('active');
+      if (entry.target === fourth) {
+        hideFooterImmediate();
+        resetFourthState();
+      }
     }
   });
 }, observerOptions);
-
 videoSections.forEach(section => observer.observe(section));
 
+/* Компенсация header */
 function setScrollPaddingForHeader(){
   const h = document.querySelector('header')?.offsetHeight || 0;
   document.documentElement.style.setProperty('--header-h', h + 'px');
@@ -225,6 +280,7 @@ function setScrollPaddingForHeader(){
 window.addEventListener('load', setScrollPaddingForHeader);
 window.addEventListener('resize', setScrollPaddingForHeader);
 
+/* Reduced motion */
 const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
 function applyReducedMotion(e){
   if (e.matches){
@@ -239,66 +295,181 @@ function applyReducedMotion(e){
 applyReducedMotion(reduceMotion);
 reduceMotion.addEventListener?.('change', applyReducedMotion);
 
-function showFooter(footer){
+/* Показ/скрытие футера */
+function showFooter(){
+  if (footerOpen) return;
   footer.style.display = 'block';
   requestAnimationFrame(() => {
     footer.classList.remove('hidden');
     footer.classList.add('shown');
+    document.body.classList.add('footer-visible');
+    footerOpen = true;
   });
 }
-
-function hideFooter(footer){
+function hideFooter(){ // используется, когда уходим с 4-й секции
+  if (!footerOpen) return;
+  document.body.classList.remove('footer-visible');
   footer.classList.remove('shown');
   footer.classList.add('hidden');
   footer.addEventListener('transitionend', () => {
     if (footer.classList.contains('hidden')) {
       footer.style.display = 'none';
+      footerOpen = false;
+      resetFourthState(); // полный сброс только при уходе со слайда
     }
   }, { once: true });
 }
-
-let atBottomBeforeScroll = false;
-let scrollTimeout = null;
-
-function isNearBottom(){
-  const scrollY = window.scrollY || window.pageYOffset;
-  const viewportHeight = window.innerHeight;
-  const fullHeight = document.documentElement.scrollHeight;
-  return (scrollY + viewportHeight) >= (fullHeight - 5);
+function hideFooterStay(){ // прячем футер, остаёмся на 4-й и сразу пере-армим
+  if (!footerOpen) return;
+  document.body.classList.remove('footer-visible');
+  footer.classList.remove('shown');
+  footer.classList.add('hidden');
+  const finalize = () => {
+    footer.style.display = 'none';
+    footerOpen = false;
+    rearmFourth(); // готовим к следующему показу
+  };
+  footer.addEventListener('transitionend', finalize, { once: true });
+  setTimeout(finalize, 650); // фолбэк
+}
+function hideFooterThenScrollPrev(prevSection){
+  const goPrev = () => {
+    if (!prevSection) return;
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      scrollToSection(prevSection);
+    }));
+  };
+  if (!footerOpen) { goPrev(); return; }
+  document.body.classList.remove('footer-visible');
+  footer.classList.remove('shown');
+  footer.classList.add('hidden');
+  const onEnd = () => {
+    footer.style.display = 'none';
+    footerOpen = false;
+    resetFourthState();
+    goPrev();
+  };
+  footer.addEventListener('transitionend', onEnd, { once: true });
+  setTimeout(onEnd, 650);
+}
+function hideFooterImmediate(){
+  footer.classList.remove('shown');
+  footer.classList.add('hidden');
+  footer.style.display = 'none';
+  document.body.classList.remove('footer-visible');
+  footerOpen = false;
+  // тут полный сброс уместен (используется при уходе/старте)
+  resetFourthState();
 }
 
-function handleScrollStop() {
-  const active = document.querySelector('.video-section.active');
-  if (active === videoSections[3]) {
-    const footer = active.querySelector('.video-footer');
-    if (!footer) return;
-
-    if (isNearBottom()) {
-      if (!atBottomBeforeScroll) {
-        atBottomBeforeScroll = true;
-      } else {
-        if (!footer.classList.contains('shown')) {
-          showFooter(footer);
-        }
-      }
-    } else {
-      if (footer.classList.contains('shown')) {
-        hideFooter(footer);
-      }
-      atBottomBeforeScroll = false;
-    }
-  } else {
-    const footer = document.querySelector('.video-footer.shown');
-    if (footer) {
-      hideFooter(footer);
-    }
-    atBottomBeforeScroll = false;
+/* Навигация по секциям */
+let isScrolling = false;
+function scrollToSection(section) {
+  if (!section) return;
+  const top = section.offsetTop;
+  const already = Math.abs((window.scrollY || window.pageYOffset) - top) < 2;
+  if (already) {
+    // Якорим без "smooth", чтобы не блокировать жесты флагом isScrolling
+    window.scrollTo({ top });
+    return;
   }
+  isScrolling = true;
+  window.scrollTo({ top, behavior: 'smooth' });
+  setTimeout(() => { isScrolling = false; }, 500);
 }
 
-window.addEventListener('scroll', () => {
-  if (scrollTimeout) clearTimeout(scrollTimeout);
-  scrollTimeout = setTimeout(handleScrollStop, 50);
+/* Wheel: 1–3 — нативный snap; 4 — управляем показом/скрытием футера и якорим секцию */
+const WHEEL_THRESHOLD = 10;
+window.addEventListener('wheel', (e) => {
+  const current = document.querySelector('.video-section.active');
+  if (!current) return;
+
+  if (current !== fourth) {
+    // 1–3: нативный CSS scroll-snap, не мешаем
+    return;
+  }
+
+  const dy = e.deltaY || 0;
+  if (Math.abs(dy) < 1) return;
+  if (isScrolling) return;
+
+  if (dy > WHEEL_THRESHOLD) {
+    // Вниз: показываем футер после арминга и "первого" съеденного жеста
+    if (!footerOpen && fourthArmed && fourthReadyToShow) {
+      if (!fourthFirstDownConsumed) { fourthFirstDownConsumed = true; e.preventDefault(); return; }
+      e.preventDefault();
+      showFooter();
+    } else {
+      // Перехватываем, чтобы не улететь скроллом
+      e.preventDefault();
+      scrollToSection(fourth);
+    }
+    return;
+  }
+
+  if (dy < -WHEEL_THRESHOLD) {
+    // Вверх на 4-й: прячем футер (если открыт) и якорим на 4-й, не уходим на 3-ю
+    e.preventDefault();
+    if (footerOpen) {
+      hideFooterStay();           // пере-армим для следующих циклов
+      scrollToSection(fourth);    // якорим
+      return;
+    }
+    scrollToSection(fourth);
+    return;
+  }
+}, { passive: false }); // важно: непассивный, иначе preventDefault не сработает
+
+/* Touch: 1–3 — нативный snap; 4 — явная логика тоггла */
+let touchStartY = 0;
+window.addEventListener('touchstart', (e) => {
+  touchStartY = e.touches[0].clientY;
+}, { passive: true });
+
+window.addEventListener('touchend', (e) => {
+  const touchEndY = e.changedTouches[0].clientY;
+  const delta = touchStartY - touchEndY; /* >0 — свайп вверх (вниз по контенту) */
+  const current = document.querySelector('.video-section.active');
+  if (!current) return;
+
+  const TOUCH_THRESHOLD = 30;
+  if (Math.abs(delta) < TOUCH_THRESHOLD) return;
+
+  if (current === fourth) {
+    if (delta > 0) {
+      // Свайп вверх: показываем футер после арминга
+      if (!footerOpen && fourthArmed && fourthReadyToShow) {
+        if (!fourthFirstDownConsumed) { fourthFirstDownConsumed = true; return; }
+        showFooter();
+      } else {
+        scrollToSection(fourth);
+      }
+      return;
+    } else {
+      // Свайп вниз: прячем футер и остаёмся на 4-й, без перехода к 3-й
+      if (footerOpen) {
+        hideFooterStay();
+      }
+      scrollToSection(fourth);
+      return;
+    }
+  }
+  // 1–3: нативный snap
+}, { passive: true });
+
+/* Стартовые фиксы */
+window.addEventListener('DOMContentLoaded', () => {
+  if (!document.querySelector('.video-section.active')) {
+    videoSections[0]?.classList.add('active');
+  }
+});
+window.addEventListener('load', () => {
+  hideFooterImmediate();
+  setScrollPaddingForHeader();
+  if (!document.querySelector('.video-section.active')) {
+    videoSections[0]?.classList.add('active');
+  }
+  window.scrollBy(0, 0);
 });
 </script>
 {% endblock %}
