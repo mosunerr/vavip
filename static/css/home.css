@@ -1,0 +1,132 @@
+.video-section {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+}
+
+body.nav-open .video-section {
+  filter: blur(6px);
+  transition: filter 0.3s ease;
+}
+
+/* Небольшой «peek» следующего блока */
+.video-section + .video-section {
+  margin-top: -5vh;
+}
+
+/* Контейнер прокрутки + компенсация фиксированного header */
+html, body {
+  margin: 0;
+  scroll-behavior: smooth;
+  scroll-snap-type: y mandatory;
+  -webkit-overflow-scrolling: auto;
+}
+
+html {
+  scroll-padding-top: var(--header-h, 0px);
+}
+
+.video-section video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* Кликабельный оверлей-ссылка по всей секции (используется на 1-й) */
+.video-section .section-link {
+  position: absolute;
+  inset: 0;
+  z-index: 6;
+  display: block;
+  cursor: pointer;
+  background: transparent;
+}
+
+/* Видео 2, 3 и 4 затемнены, активное — светлеет */
+.video-section:nth-of-type(n+2) video {
+  filter: brightness(0.1);
+  transition: filter 2s ease;
+}
+.video-section:nth-of-type(n+2).active video {
+  filter: brightness(1);
+}
+
+.video-caption {
+  position: absolute;
+  bottom: 90px;
+  left: 50%;
+  transform: translate(-50%, 40px);
+  font-family: Helvetica, Arial, sans-serif;
+  font-weight: 100;
+  font-size: 2rem;
+  color: #fff;
+  text-shadow: 0 1px 8px rgba(0,0,0,0.7);
+  pointer-events: none;
+  white-space: nowrap;
+  opacity: 0;
+  transition: opacity 3s ease, transform 2s ease;
+}
+.video-section.active .video-caption {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+
+/* Футер поверх 4-го видео */
+.video-footer {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  left: 0;
+  background-color: #121416;
+  z-index: 10;
+  opacity: 0;
+  transform: translateY(100%);
+  transition: opacity 0.4s ease, transform 0.4s ease;
+  display: none;
+  color: #fff;
+}
+/* Когда футер открыт — скрыть подпись "МАГАЗИН" на 4-й секции */
+body.footer-visible #fourth-section .video-caption {
+  opacity: 0;
+  transform: translate(-50%, 10px);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  pointer-events: none;
+}
+.video-footer.shown {
+  display: block;
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.video-footer.hidden {
+  opacity: 0;
+  transform: translateY(100%);
+}
+
+/* © */
+.copyright-text {
+  font-size: 0.9rem;
+  text-align: center;
+  margin-top: 10px;
+  color: #fff;
+}
+
+/* Уважаем prefers-reduced-motion */
+@media (prefers-reduced-motion: reduce){
+  html, body { scroll-behavior: auto; }
+  .video-caption { transition: none; }
+  .video-footer { transition: none; }
+}
+
+/* При видимом футере: полностью блокируем прокрутку страницы */
+body.footer-visible{
+  overflow: hidden !important;
+  touch-action: none !important;
+  overscroll-behavior: none !important;
+}
