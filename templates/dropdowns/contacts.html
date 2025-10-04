@@ -1,0 +1,56 @@
+{# templates/dropdowns/contacts.html #}
+<section class="dropdown-section" data-key="0" role="region" aria-labelledby="menu-contacts">
+  <div class="contacts-combined" role="group" aria-label="КОНТАКТЫ">
+    <div class="contacts-overlay" aria-hidden="true"></div>
+    <!-- Левая половина: «пилюли» выбора -->
+    <form class="contacts-form" action="#" method="get" aria-label="Выбор направления">
+      <div class="form-row">
+        <select id="country-select" name="country" aria-label="Страна" required>
+          <option value="" selected disabled hidden>ВЫБЕРИТЕ СТРАНУ</option>
+          <option value="ru">РОССИЯ</option>
+          <option value="by">БЕЛАРУСЬ</option>
+          <option value="ge">ГРУЗИЯ</option>
+          <option value="kz">КАЗАХСТАН</option>
+          <option value="ae">ОАЭ</option>
+        </select>
+        <!-- Видимая «пилюля» вместо нативного select -->
+        <div class="nice-select" id="country-nice"
+             role="combobox" aria-expanded="false" aria-haspopup="listbox"
+             aria-controls="country-list" tabindex="0" data-for="country-select" aria-activedescendant="">
+          <div class="label">ВЫБЕРИТЕ СТРАНУ</div>
+        </div>
+        <div class="nice-options" id="country-list" role="listbox" hidden></div>
+      </div>
+      <div class="form-row">
+        <select id="city-select" name="city" aria-label="Город" disabled>
+          <option value="" selected disabled hidden>ВЫБЕРИТЕ ГОРОД</option>
+        </select>
+        <!-- Видимая «пилюля» вместо нативного select -->
+        <div class="nice-select" id="city-nice"
+             role="combobox" aria-expanded="false" aria-haspopup="listbox"
+             aria-controls="city-list" tabindex="0" data-for="city-select" aria-disabled="true" aria-activedescendant="">
+          <div class="label">ВЫБЕРИТЕ ГОРОД</div>
+        </div>
+        <div class="nice-options" id="city-list" role="listbox" hidden></div>
+      </div>
+    </form>
+    <!-- Правая половина: по умолчанию ТОЛЬКО фон-карта, без надписей -->
+    <div class="contacts-right-col" id="contacts-right">
+      <div class="contacts-info-area" id="contacts-info" hidden>
+        <p class="contacts-phone"><a id="contacts-phone-link" href="tel:+74950000000">+7 (495) 000‑00‑00</a></p>
+        <p class="contacts-hours" id="contacts-hours-text">пн‑пт 09:00–19:00</p>
+        <div class="contacts-actions-row">
+          <button id="feedback-open-btn" type="button" class="btn btn-chip">Обратная связь</button>
+          <div class="contacts-icons-row">
+            <a class="social-icon telegram" href="https://t.me/karen_vavip" target="_blank" rel="noopener noreferrer" aria-label="Telegram">
+              <img src="{{ url_for('static', filename='images/icons/telegram.svg') }}" alt="Telegram">
+            </a>
+            <a class="social-icon whatsapp" href="https://wa.me/79312487013" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp">
+              <img src="{{ url_for('static', filename='images/icons/whatsapp1.svg') }}" alt="WhatsApp">
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

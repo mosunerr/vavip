@@ -1,0 +1,6 @@
+/* about dropdown styles (data-key="1") */
+#menu-panel .dropdown-section[data-key="1"] {
+  /* секция «О компании» */
+}
+#menu-panel .dropdown-section[data-key="1"] .dropdown-left {}
+#menu-panel .dropdown-section[data-key="1"] .dropdown-right {}

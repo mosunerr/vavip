@@ -1,10 +1,16 @@
+/* 9  home.css*/
 .video-section {
   position: relative;
   width: 100vw;
-  height: 100vh;
+
+  /* высота секции = 95% вьюпорта (показываем 5% следующей) */
+  height: calc(100vh - 5vh);    /* fallback */
+  height: calc(100svh - 5svh);  /* точнее для iOS/Safari */
+  height: calc(100dvh - 5dvh);  /* точнее для современных движков */
+
   overflow: hidden;
-  scroll-snap-align: start;
-  scroll-snap-stop: always;
+  scroll-snap-align: start;     /* снапим начало секции */
+  scroll-snap-stop: always;     /* останавливаемся на каждой */
 }
 
 body.nav-open .video-section {
@@ -12,12 +18,9 @@ body.nav-open .video-section {
   transition: filter 0.3s ease;
 }
 
-/* Небольшой «peek» следующего блока */
-.video-section + .video-section {
-  margin-top: -5vh;
-}
+/* Убираем прежний «peek» через отрицательный отступ */
+.video-section + .video-section { margin-top: 0; }
 
-/* Контейнер прокрутки + компенсация фиксированного header */
 html, body {
   margin: 0;
   scroll-behavior: smooth;
@@ -25,9 +28,8 @@ html, body {
   -webkit-overflow-scrolling: auto;
 }
 
-html {
-  scroll-padding-top: var(--header-h, 0px);
-}
+/* компенсация фиксированного header на прилипе */
+html { scroll-padding-top: var(--header-h, 0px); }
 
 .video-section video {
   position: absolute;
@@ -91,23 +93,14 @@ html {
   display: none;
   color: #fff;
 }
-/* Когда футер открыт — скрыть подпись "МАГАЗИН" на 4-й секции */
 body.footer-visible #fourth-section .video-caption {
   opacity: 0;
   transform: translate(-50%, 10px);
   transition: opacity 0.3s ease, transform 0.3s ease;
   pointer-events: none;
 }
-.video-footer.shown {
-  display: block;
-  opacity: 1;
-  transform: translateY(0);
-}
-
-.video-footer.hidden {
-  opacity: 0;
-  transform: translateY(100%);
-}
+.video-footer.shown { display: block; opacity: 1; transform: translateY(0); }
+.video-footer.hidden { opacity: 0; transform: translateY(100%); }
 
 /* © */
 .copyright-text {

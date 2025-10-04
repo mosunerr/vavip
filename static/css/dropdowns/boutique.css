@@ -1,0 +1,6 @@
+/* boutique dropdown styles (data-key="4") */
+#menu-panel .dropdown-section[data-key="4"] {
+  /* секция «Бутик» */
+}
+#menu-panel .dropdown-section[data-key="4"] .dropdown-left {}
+#menu-panel .dropdown-section[data-key="4"] .dropdown-right {}

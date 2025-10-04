@@ -1,28 +1,35 @@
+<!-- templates/layout.html -->
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>{% block title %}Vavip{% endblock %}</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{% block title %}Vavip{% endblock %}</title>
 
-<link rel="stylesheet" href="{{ url_for('static', filename='css/site.css') }}">
-{% block head_extra %}{% endblock %}
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/site.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/dropdowns/contacts.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/dropdowns/about.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/dropdowns/node.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/dropdowns/bim.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/dropdowns/boutique.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/dropdowns/shop.css') }}">
+  {% block head_extra %}{% endblock %}
 </head>
 <body>
-  <a class="skip-link" href="#main-content">Перейти к основному содержанию</a>
+  {% include "header.html" %}
 
-{% include "_header.html" %}
+  {% block video_fullscreen %}{% endblock %}
+  <main id="main-content" tabindex="-1">{% block content %}{% endblock %}</main>
 
-{% block video_fullscreen %}{% endblock %}
-<main id="main-content" tabindex="-1">{% block content %}{% endblock %}</main>
+  {% block footer %}
+  <footer class="site-footer">
+    {% include "footer.html" %}
+  </footer>
+  {% endblock %}
 
-{% block footer %}
-<footer class="site-footer">
-  {% include "_footer.html" %}
-</footer>
-{% endblock %}
-
-<script src="{{ url_for('static', filename='js/nav.js') }}"></script>
-{% block scripts_extra %}{% endblock %}
+  <script src="{{ url_for('static', filename='js/nav.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/contacts.js') }}"></script>
+  {% block scripts_extra %}{% endblock %}
 </body>
+
 </html>

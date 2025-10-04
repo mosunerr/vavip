@@ -1,3 +1,4 @@
+/* 12  home.js*/
 const videoSections = document.querySelectorAll('.video-section');
 const fourth = document.getElementById('fourth-section');
 const footer = document.getElementById('video-footer');

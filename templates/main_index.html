@@ -14,10 +14,10 @@
   </video>
   <div class="video-caption">УЗЕЛ ВВОДА</div>
   <a class="section-link"
-     href="http://127.0.0.1:5002/catalog"
+     href="{{ url_for('main_home') }}"
      target="_self"
      rel="noopener"
-     aria-label="Перейти в каталог"></a>
+     aria-label="Перейти на главную"></a>
 </div>
 
 <div class="video-section">
@@ -41,7 +41,7 @@
   <div class="video-caption">МАГАЗИН</div>
 
   <footer class="video-footer hidden" id="video-footer">
-    {% include "_footer.html" %}
+    {% include "footer.html" %}
   </footer>
 </div>
 {% endblock %}

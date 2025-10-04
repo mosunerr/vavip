@@ -1,0 +1,41 @@
+<!--8 templates/_footer.html -->
+<div class="footer-content">
+  <div class="columns">
+    <div>
+      <strong>КОНФИДЕЦИАЛЬНОСТЬ И УСЛОВИЯ</strong>
+      <a href="#">ПОЛИТИКА ОБРАБОТКИ И ЗАЩИТЫ ПЕРСОНАЛЬНЫХ ДАННЫХ И ИСПОЛЬЗОВАНИЯ COOKIE</a>
+      <a href="#">ДОГОВОР ОФЕРТЫ БИМ</a>
+      <a href="#">ГАРАНТИЯ</a>
+      <a href="#">ДОГОВОР НА ПРОЕКТИРОВАНИЕ ИНЖЕНЕРНЫХ СИСТЕМ</a>
+    </div>
+    <div>
+      <strong>СОТРУДНИЧЕСТВО</strong>
+      <a href="#">ДИЗАЙНЕРАМ И АРХИТЕКТОРАМ</a>
+      <a href="#">РУКОВОДИТЕЛЯМ СТРОИТЕЛЬНЫХ КОМПАНИЙ И ПРОЕКТОВ</a>
+      <a href="#">ДИСТРИБЬЮТОРАМ</a>
+      <a href="#">ДЛЯ ВИЗУАЛА</a>
+    </div>
+  </div>
+
+  <div class="footer-divider"></div>
+
+  <div class="footer-bottom-wrapper">
+    <div class="footer-bottom">
+      <div class="vertical-text-footer">
+        <img src="{{ url_for('static', filename='images/vavip_logo_text.png') }}" alt="Vavip" />
+      </div>
+      <div class="social-icons">
+        {% for name, url in [('telegram', 'https://t.me/karen_vavip'),
+                             ('instagram', 'https://instagram.com/karen_vavip'),
+                             ('vk', 'https://vk.com/karen_vavip'),
+                             ('pinterest', 'https://pinterest.com/karen_vavip'),
+                             ('youtube', 'https://youtube.com/@karenvavip')] %}
+          <a href="{{ url }}" class="social-icon {{ name }}" target="_blank" rel="noopener noreferrer">
+            <img src="{{ url_for('static', filename='images/icons/' + name + '.svg') }}" alt="{{ name }}">
+          </a>
+        {% endfor %}
+      </div>
+    </div>
+    <div class="copyright-text">© 2024 Vavip. All Rights Reserved</div>
+  </div>
+</div>

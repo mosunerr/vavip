@@ -1,0 +1,373 @@
+/* ================================
+   Секция «КОНТАКТЫ» (data-key="0")
+   Объединённые стили + переменные
+   ================================ */
+
+/* Глобальные UI‑переменные этой секции (можно править значения) */
+#menu-panel .dropdown-section[data-key="0"]{
+  --pill-w: 40%;           /* ширина «пилюли» сверху (select/.nice-select) */
+  --pill-min: 220px;       /* минимальная ширина «пилюли» */
+  --list-w: 40%;           /* ширина выпадающего списка (nice-options) */
+  --gap-v: 32px;           /* вертикальный интервал между «Страна» и «Город» */
+  --phone-color: #ffffff;  /* цвет телефона справа */
+}
+
+/* Принудительно скрываем элементы с атрибутом hidden */
+#menu-panel .dropdown-section[data-key="0"] [hidden] {
+  display: none !important;
+}
+
+/* Внутренности панели занимают всю высоту */
+#menu-panel .dropdown-inner,
+#menu-panel .dropdown-sections,
+#menu-panel .dropdown-section.active{
+  height: 100%;
+}
+
+/* Контейнер: 2 колонки, серебристый фон, скругления, правый фон через ::before */
+#menu-panel .dropdown-section[data-key="0"] .contacts-combined{
+  width: 85%;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  column-gap: 40px;
+  row-gap: 28px;
+  padding: 32px 20px;
+  background: #2b2e34;
+  border-radius: 12px;
+  color: #eef1f6;
+  height: 100%;
+  align-items: stretch;
+  position: relative;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+/* Правый фон — по умолчанию карта; картинка может меняться через JS --city-bg */
+#menu-panel .dropdown-section[data-key="0"] .contacts-combined::before{
+  content:"";
+  position:absolute; top:0; bottom:0; left:50%; right:0;
+  background: var(--city-bg, url("/static/images/contacts/contacts-bg-map.jpg")) center/cover no-repeat;
+  border-radius: 0 12px 12px 0; z-index:0;
+}
+
+/* Теневая вертикальная «полоса» поверх правой половины, центр смещается JS */
+#menu-panel .dropdown-section[data-key="0"] .contacts-overlay{
+  position: absolute;
+  z-index: 1;
+  pointer-events: none;
+  left: 50%; top: 0; right: 0; bottom: 0;
+
+  /* Центр полосы и радиусы затухания */
+  --band-center: 58%;
+  --r1: 60px;
+  --r2: 130px;
+  --r3: 240px;
+
+  background:
+    linear-gradient(to bottom,
+      rgba(0,0,0,0)          calc(var(--band-center) - var(--r3)),
+      rgba(0,0,0,0.10)       calc(var(--band-center) - var(--r2)),
+      rgba(0,0,0,0.36)       calc(var(--band-center) - var(--r1)),
+      rgba(0,0,0,0.36)       calc(var(--band-center) + var(--r1)),
+      rgba(0,0,0,0.10)       calc(var(--band-center) + var(--r2)),
+      rgba(0,0,0,0)          calc(var(--band-center) + var(--r3))
+    );
+}
+
+/* Левая колонка — интервал между «пилюлями» */
+#menu-panel .dropdown-section[data-key="0"] .contacts-form{
+  display: grid;
+  gap: var(--gap-v);
+  justify-items: center;
+  align-content: center;
+  z-index: 2;
+}
+
+/* Строка формы — относительное позиционирование под кастомный селект */
+#menu-panel .dropdown-section[data-key="0"] .contacts-form .form-row{
+  position: relative;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+/* Нативный <select> скрыт визуально (opacity), но сохраняет размеры/фокус */
+#menu-panel .dropdown-section[data-key="0"] .contacts-form select{
+  width: var(--pill-w);
+  min-width: var(--pill-min);
+  height: 64px;      /* высота пилюли */
+  line-height: 62px;/* высота пилюли */
+  -webkit-appearance: none;
+  appearance: none;
+  padding: 0 38px 0 14px;
+  border: 2px solid #1a1d22;               /* тёмно-графитовый ободок */
+  background: #2b2e34;             /* графитовый ободок */
+  background: #2b2e34;    
+  color:#eef1f6;
+  font-size:.85rem;
+  font-weight:normal;
+  text-align: center;
+  text-align-last: center;
+  outline: none;
+  transition: border-color .2s, box-shadow .2s, background-color .2s;
+  opacity: 0;
+}
+
+/* Ховер нативного select */
+#menu-panel .dropdown-section[data-key="0"] .contacts-form select:hover{
+  border-color: #1a1d22;                   /* тёмный графит при hover */
+  background-color: #1a1d22;      
+}
+
+#menu-panel .dropdown-section[data-key="0"] .contacts-form select:focus-visible{
+  outline: none;
+  border-color: #1a1d22;
+  background-color: #1a1d22;
+}
+
+/* Видимая «пилюля» — белая обводка по умолчанию */
+.nice-select{
+  position: absolute;
+  top: 0; bottom: 0; left: 50%;
+  transform: translateX(-50%);
+  width: var(--pill-w);
+  min-width: var(--pill-min);
+  height: 64px;       /* высота пилюли */
+  line-height: 64px; /* высота пилюли */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border: 2px solid #1a1d22;               /* тёмно-графитовый ободок */
+  background: #2b2e34;  
+  border-radius: 9999px;
+  color:#eef1f6;
+  font-size:.85rem;
+  font-weight: normal;
+
+  padding: 0 42px;
+  cursor: pointer;
+  user-select: none;
+  transition: border-color .2s, box-shadow .2s, background-color .2s;
+}
+
+/* Ховер «пилюли» — тонкое свечение обводки как в шапке */
+.nice-select:hover{
+  border-color: #1a1d22;                   /* тёмный графит как шапка */
+  background: #1a1d22;                   /* чуть темнее при наведении */
+}
+
+/* Город не выбран → пилюля не реагирует визуально на hover/focus */
+#menu-panel .dropdown-section[data-key="0"] .nice-select[aria-disabled="true"]{
+  cursor: default;
+}
+
+#menu-panel .dropdown-section[data-key="0"] 
+.nice-select[aria-disabled="true"]:hover,
+#menu-panel .dropdown-section[data-key="0"] 
+.nice-select[aria-disabled="true"]:focus-visible{
+  background: #2b2e34 !important;   /* базовый серебристый фон */
+  border-color: #1a1d22 !important;  /* тёмно‑графитовый ободок */
+  box-shadow: none !important;
+}
+
+/* Фокус «пилюли» */
+.nice-select:focus-visible{
+  outline: none;
+  border-color: #1a1d22;                   /* тёмный графит */
+  background: #1a1d22;     
+}
+
+
+/* Согласуем шрифты «пилюли» с навигацией, если переменные выставлены в JS */
+#menu-panel .dropdown-section[data-key="0"] .nice-select,
+#menu-panel .dropdown-section[data-key="0"] .nice-select .label,
+#menu-panel .dropdown-section[data-key="0"] .nice-options,
+#menu-panel .dropdown-section[data-key="0"] .nice-option,
+#menu-panel .dropdown-section[data-key="0"] .btn.btn-chip{
+  font-weight: var(--nav-font-weight, normal);
+  font-family: var(--nav-font-family, inherit);
+  font-size: var(--nav-font-size, .85rem);
+  letter-spacing: var(--nav-letter-spacing, .02em);
+  text-transform: var(--nav-text-transform, none);
+}
+
+/* Текстовая метка внутри «пилюли» — по центру и с обрезкой переполнения */
+.nice-select .label{
+  width: 100%;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Выпадающий список опций (может быть шире/уже «пилюли») */
+/* Выпадающий список опций — непрозрачный фон */
+/* Выпадающий список опций — непрозрачный тёмный фон как в шапке */
+.nice-options{
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  top: calc(100% + 2px);
+  width: var(--list-w);
+  min-width: var(--pill-min);
+  max-height: 240px;
+  overflow: auto;
+
+  background: #1a1d22;                     /* тёмный графит как при hover */
+  border: 2px solid #1a1d22;
+  border-radius: 32px; 
+  box-shadow: 0 10px 30px rgba(0,0,0,.35);
+  padding:8px;
+  z-index: 20;
+}
+
+
+.nice-options[hidden]{ display:none !important; }
+
+/* Элементы списка опций — состояния: выбранная / активная / ховер */
+.nice-option{
+  border-radius:16px;
+  padding:10px 12px;
+  text-align:center;
+  cursor:pointer;
+  font-weight:normal;
+  font-size:.85rem; 
+  color:#e9edf6;
+}
+.nice-option[aria-selected="true"]{ background: rgba(255,255,255,.10); }
+.nice-option.is-active{ background: rgba(255,255,255,.18); color:#fff; }
+.nice-option:hover{ background: rgba(255,255,255,.14); }
+
+/* Пока список открыт — у выбранной убираем «залипание» фона */
+/* Пока список открыт — не залипаем фоном, но даём приоритет hover/active */
+.nice-select[aria-expanded="true"] ~ .nice-options .nice-option[aria-selected="true"]:not(:hover):not(.is-active){
+  background: transparent;
+}
+
+/* Явно задаём подсветку для выбранного при hover/active */
+.nice-options .nice-option[aria-selected="true"]:hover,
+.nice-options .nice-option[aria-selected="true"].is-active{
+  background: rgba(255,255,255,.18);
+  color: #fff;
+}
+
+/* Правая колонка — центрируем контент */
+#menu-panel .dropdown-section[data-key="0"] .contacts-right-col{
+  position: relative;
+  z-index: 2;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Карточка с телефоном/часами/кнопкой — позиционирование поверх фона */
+#menu-panel .dropdown-section[data-key="0"] .contacts-info-area{
+  position:absolute;
+  left:50%; top:58%;
+  transform: translate(-50%, -50%);
+  z-index:2;
+  text-align:center;
+  display:grid;
+  grid-auto-rows:min-content;
+  row-gap:14px;
+  padding:0 16px;
+  background:transparent;
+  border:none;
+}
+
+/* Телефон и часы — типографика */
+#menu-panel .dropdown-section[data-key="0"] .contacts-phone{
+  margin:0;
+  font-size:1.6rem;
+  line-height:1.25;
+  white-space:nowrap;
+}
+#menu-panel .dropdown-section[data-key="0"] #contacts-hours-text{
+  margin:0;
+  color:#e1e6f3;
+  opacity:.92;
+  font-size:1rem;
+  line-height:1.5;
+}
+
+/* Цвет ссылки телефона — управляется переменной */
+#menu-panel .dropdown-section[data-key="0"] #contacts-phone-link{
+  color: var(--phone-color);
+  text-decoration: none;
+}
+
+/* Ряд действий: кнопка + иконки */
+#menu-panel .dropdown-section[data-key="0"] .contacts-actions-row{
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  gap:16px;
+}
+
+/* Кнопка‑«чип» со свечением по фокусу */
+#menu-panel .dropdown-section[data-key="0"] .btn.btn-chip{
+  height: 64px;     /* высота пилюли */
+  line-height: 62px; /* высота пилюли */
+  padding:0 24px;
+  border: 1px solid var(--ui-stroke);
+  border-radius:9999px;
+  background:rgba(255,255,255,0.06);
+  color:#fff;
+  font-size:.95rem;
+  font-weight:normal;
+  outline: none;
+  transition: border-color .2s, box-shadow .2s, background-color .2s;
+}
+#menu-panel .dropdown-section[data-key="0"] .btn.btn-chip:hover{
+  border-color: rgba(255,255,255,.72);
+}
+#menu-panel .dropdown-section[data-key="0"] .btn.btn-chip:focus-visible,
+#menu-panel .dropdown-section[data-key="0"] .btn.btn-chip.is-active{
+  outline: none;
+  border-color: var(--ui-glow);
+  box-shadow: 0 0 0 3px var(--ui-glow-ring);
+}
+
+/* Заглушка «КОНТАКТЫ» до выбора города */
+#menu-panel .dropdown-section[data-key="0"] .contacts-hero-title{
+  position:absolute;
+  left:50%; top:50%;
+  transform:translate(-50%, -50%);
+  z-index:2;
+  color:#fff;
+  font-size:2.2rem;
+  letter-spacing:.04em;
+  text-shadow:0 6px 22px rgba(0,0,0,.55);
+}
+#menu-panel .dropdown-section[data-key="0"] .contacts-hero-title[hidden]{
+  display:none !important;
+}
+
+/* =======================
+   Мобильная адаптация
+   ======================= */
+@media (max-width: 720px){
+  /* На мобилке всё на всю ширину + чуть меньше интервал */
+  #menu-panel .dropdown-section[data-key="0"]{
+    --pill-w: 100%;
+    --pill-min: 0px;
+    --list-w: 100%;
+    --gap-v: 22px;
+  }
+
+  /* Одна колонка, компактные отступы */
+  #menu-panel .dropdown-section[data-key="0"] .contacts-combined{
+    width:85%;
+    margin:0;
+    grid-template-columns:1fr;
+    padding:22px 16px;
+  }
+
+  /* Карточка чуть выше центра */
+  #menu-panel .dropdown-section[data-key="0"] .contacts-info-area{
+    top: 62%;
+  }
+}
+
