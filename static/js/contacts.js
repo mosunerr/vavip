@@ -22,11 +22,18 @@ document.addEventListener('DOMContentLoaded', function() {
   if (cityRow){
     cityRow.classList.add('city-row');
     cityRow.classList.add('is-collapsed');
+
+    // После завершения анимации раскрытия пересчитываем направляющие
+    cityRow.addEventListener('transitionend', (e)=>{
+      if (['max-height','transform','opacity','margin-top'].includes(e.propertyName)){
+        requestAnimationFrame(()=> requestAnimationFrame(placeBand));
+      }
+    });
   }
 
-  // Карты
+  // Заставка GIF по умолчанию, остальные — карты/фото
   const cityBg = {
-    base: "/static/images/contacts/contacts-bg-map.jpg",
+    base: "/static/images/contacts/contacts-bg-anim.gif",
     country_ru: "/static/images/contacts/maps/map-ru.jpg",
     country_by: "/static/images/contacts/maps/map-by.jpg",
     country_ge: "/static/images/contacts/maps/map-ge.jpg",
@@ -34,6 +41,10 @@ document.addEventListener('DOMContentLoaded', function() {
     country_ae: "/static/images/contacts/maps/map-ae.jpg",
     moscow: "/static/images/contacts/photo-moscow.jpg",
     spb: "/static/images/contacts/photo-spb.jpg",
+    krasnodar: "/static/images/contacts/photo-krasnodar.jpg",
+    rostov: "/static/images/contacts/photo-rostov.jpg",
+    voronezh: "/static/images/contacts/photo-voronezh.jpg",
+    samara: "/static/images/contacts/photo-samara.jpg",
     minsk: "/static/images/contacts/photo-minsk.jpg",
     tbilisi: "/static/images/contacts/photo-tbilisi.jpg",
     batumi: "/static/images/contacts/photo-batumi.jpg",
@@ -60,7 +71,11 @@ document.addEventListener('DOMContentLoaded', function() {
     ru: { 
       default: { phone: '+7 (495) 123‑45‑67', tel: '+74951234567', hours: 'ПН-ПТ 09:00–19:00', photo: 'base' },
       moscow:  { phone: '+7 (495) 123‑45‑67', tel: '+74951234567', hours: 'ПН-ПТ 09:00–19:00', photo: 'moscow' },
-      spb:     { phone: '8‑931‑248‑70‑13',    tel: '+79312487013', hours: 'с 09:00 до 21:00 каждый день', photo: 'spb' } 
+      spb:     { phone: '8‑931‑248‑70‑13',    tel: '+79312487013', hours: 'с 09:00 до 21:00 каждый день', photo: 'spb' },
+      krasnodar:  { phone: '+7 (861) 000-00-00', tel: '+78610000000', hours: 'ПН-ПТ 09:00–18:00', photo: 'krasnodar' },
+      rostov:     { phone: '+7 (863) 000-00-00', tel: '+78630000000', hours: 'ПН-ПТ 09:00–18:00', photo: 'rostov' },
+      voronezh:   { phone: '+7 (473) 000-00-00', tel: '+74730000000', hours: 'ПН-ПТ 09:00–18:00', photo: 'voronezh' },
+      samara:    { phone: '+7 (846) 000-00-00', tel: '+78460000000', hours: 'ПН-ПТ 09:00–18:00', photo: 'samara' }
     },
     by: { 
       default: { phone: '+375 (17) 000‑00‑00', tel: '+375170000000', hours: 'Скоро будет доступно', photo: 'base' },
@@ -71,10 +86,9 @@ document.addEventListener('DOMContentLoaded', function() {
       tbilisi: { phone: '+995 (32) 000‑00‑00', tel: '+995320000000', hours: 'Скоро будет доступно', photo: 'tbilisi' },
       batumi:  { phone: '+995 (422) 000‑000',  tel: '+995422000000', hours: 'Скоро будет доступно', photo: 'batumi' } 
     },
-    kz: { 
-      default: { phone: '+77002302413', tel: '+77002302413', hours: 'ПН-ПТ 09:00–19:00', photo: 'base' },
-      astana:  { phone: '+77002302413', tel: '+77002302413', hours: 'ПН-ПТ 09:00–19:00', photo: 'astana' },
-      aktobe:  { phone: '+77002302413', tel: '+77002302413', hours: 'ПН-ПТ 09:00–19:00', photo: 'aktobe' } 
+    kz: {
+      default: { phone: '+77002302413', tel: '+77002302413', whatsapp: '77002302413', telegram: '+77002302413', photo: 'base', hours: 'ПН-ПТ 09:00–19:00' },
+      astana:  { phone: '+77002302413', tel: '+77002302413', whatsapp: '77002302413', telegram: '+77002302413', photo: 'astana', hours: 'ПН-ПТ 09:00-19:00' }
     },
     ae: { 
       default: { phone: '+971 4 000 0000', tel: '+97140000000', hours: 'Coming soon', photo: 'base' },
@@ -92,6 +106,7 @@ document.addEventListener('DOMContentLoaded', function() {
       else { img.onload = ()=> resolve(src); img.onerror = reject; img.src = src; }
     });
   }
+
   async function setCityBackgroundSmooth(kind){
     if (!combined) return;
     const url = cityBg[kind] || cityBg.base;
@@ -99,30 +114,28 @@ document.addEventListener('DOMContentLoaded', function() {
     if (current && current.includes(url)) return;
 
     const my = ++bgToken;
-    try{
-      const ready = await preload(url);
-      if (my !== bgToken) return;
+    const ready = await preload(url).catch(()=>url);
+    if (my !== bgToken) return;
 
-      combined.style.setProperty('--city-bg-next', `url("${ready}")`);
-      void combined.offsetWidth;
-      requestAnimationFrame(()=>{ if (my===bgToken) combined.classList.add('is-bg-fading'); });
+    /* 1) Готовим «next» и поднимаем его мягко */
+    combined.style.setProperty('--city-bg-next', `url("${ready}")`);
+    void combined.offsetWidth;
+    combined.classList.add('is-bg-fading');
 
-      const onEnd = ()=>{
-        if (my !== bgToken) return;
-        setTimeout(()=>{
-          combined.style.setProperty('--city-bg-current', `url("${ready}")`);
-          combined.style.setProperty('--city-bg-next', 'none');
-          combined.classList.remove('is-bg-fading');
-        }, 60);
-        combined.removeEventListener('transitionend', onEnd);
-      };
-      combined.addEventListener('transitionend', onEnd, { once:true });
-    }catch(e){
+    /* 2) После завершения фейда фиксируем «current» и снимаем класс в следующий кадр */
+    const onEnd = ()=>{
       if (my !== bgToken) return;
-      combined.style.setProperty('--city-bg-current', `url("${url}")`);
-      combined.style.setProperty('--city-bg-next', 'none');
-      combined.classList.remove('is-bg-fading');
-    }
+      combined.style.setProperty('--city-bg-current', `url("${ready}")`);
+      requestAnimationFrame(()=>{
+        combined.classList.remove('is-bg-fading');
+        /* не очищаем next, оставляем тот же url — это исключает краткий «просвет» */
+        requestAnimationFrame(()=>{
+          combined.style.setProperty('--city-bg-next', `url("${ready}")`);
+        });
+      });
+      combined.removeEventListener('transitionend', onEnd);
+    };
+    combined.addEventListener('transitionend', onEnd, { once:true });
   }
 
   /* ---------- Выставление вертикалей по макету ---------- */
@@ -132,25 +145,20 @@ document.addEventListener('DOMContentLoaded', function() {
     const base = rightHost.getBoundingClientRect();
     const toPct = (y)=> ((y - base.top) / (base.height || 1)) * 100;
 
-    // 1) Телефон: top = top «Страны»
     const rCountry = countryNice.getBoundingClientRect();
     const yPhoneTop = rCountry.top;
 
-    // 2) Ряд действий: bottom = bottom «Города»  ⇒ top = bottom(city) - height(row)
     const rCity = cityNice.getBoundingClientRect();
     const rowH  = actionsRow.getBoundingClientRect().height || 64;
     const yActionsTop = (rCity.top + rCity.height) - rowH;
 
-    // 3) Часы: центр между bottom телефона и top ряда действий
     const phoneH = phoneEl.getBoundingClientRect().height || 0;
-    const yPhoneBottom = yPhoneTop + phoneH;
-    const yHours = (yPhoneBottom + yActionsTop) / 2;
+    const yHours = (yPhoneTop + yActionsTop) / 2;
 
     rightHost.style.setProperty('--y-phone',       toPct(yPhoneTop).toFixed(2) + '%');
     rightHost.style.setProperty('--y-actions-top', toPct(yActionsTop).toFixed(2) + '%');
     rightHost.style.setProperty('--y-hours',       toPct(yHours).toFixed(2) + '%');
 
-    // Теневая полоса — приблизительный центр
     const mid = (yPhoneTop + yActionsTop) / 2;
     overlay && overlay.style.setProperty('--band-center', toPct(mid).toFixed(2) + '%');
   }
@@ -166,21 +174,43 @@ document.addEventListener('DOMContentLoaded', function() {
     return { profile: data.default, split: false };
   }
 
-  function applyProfile(profile, split){
-    if (!countrySel.value) return;
 
-    const bgKey = split ? profile.photo : getCountryBgKey(countrySel.value);
-    setCityBackgroundSmooth(bgKey);
 
-    phoneLink.textContent = profile.phone;
-    phoneLink.setAttribute('href', 'tel:' + profile.tel.replace(/\D/g,''));
-    hoursText.textContent = profile.hours;
+function applyProfile(profile, split){
+  if (!countrySel.value) return;
 
-    document.getElementById('contacts-info').hidden = !split;
-    document.getElementById('contacts-hero-title').hidden = !!split;
+  const bgKey = split ? profile.photo : getCountryBgKey(countrySel.value);
+  setCityBackgroundSmooth(bgKey);
 
-    requestAnimationFrame(()=> requestAnimationFrame(placeBand));
+  phoneLink.textContent = profile.phone;
+  phoneLink.setAttribute('href', 'tel:' + profile.tel.replace(/\D/g,''));
+  hoursText.textContent = profile.hours;
+
+  const whatsappIcon = document.querySelector('.social-icon.whatsapp');
+  const telegramIcon = document.querySelector('.social-icon.telegram');
+
+  // WhatsApp: убрать все кроме цифр (формат нужен для wa.me)
+  if (whatsappIcon && profile.whatsapp) {
+    whatsappIcon.setAttribute('href', 'https://wa.me/' + profile.whatsapp.replace(/\D/g,''));
+  } else if (whatsappIcon) {
+    whatsappIcon.setAttribute('href', 'https://wa.me/79312487013');
   }
+
+  // Telegram: НЕ удалять плюс, использовать как есть
+  if (telegramIcon && profile.telegram) {
+    telegramIcon.setAttribute('href', 'https://t.me/' + profile.telegram);
+  } else if (telegramIcon) {
+    telegramIcon.setAttribute('href', 'https://t.me/karen_vavip');
+  }
+
+  document.getElementById('contacts-info').hidden = !split;
+  document.getElementById('contacts-hero-title').hidden = !!split;
+
+  requestAnimationFrame(() => requestAnimationFrame(placeBand));
+}
+
+
+
 
   /* ---------- Опции города и появление строки ---------- */
   function updateCityOptions() {
@@ -191,7 +221,11 @@ document.addEventListener('DOMContentLoaded', function() {
       citySel.innerHTML = `
         <option value="" selected disabled hidden>ВЫБЕРИТЕ ГОРОД</option>
         <option value="moscow">МОСКВА</option>
-        <option value="spb">САНКТ-ПЕТЕРБУРГ</option>`;
+        <option value="spb">САНКТ-ПЕТЕРБУРГ</option>
+        <option value="krasnodar">КРАСНОДАР</option>
+        <option value="rostov">РОСТОВ-НА-ДОНУ</option>
+        <option value="voronezh">ВОРОНЕЖ</option>
+        <option value="samara">САМАРА</option>`;     
     } else if (hasCountry && countrySel.value === 'by') {
       citySel.disabled = false;
       citySel.innerHTML = `
@@ -219,11 +253,9 @@ document.addEventListener('DOMContentLoaded', function() {
       citySel.innerHTML = '<option value="" selected disabled hidden>ВЫБЕРИТЕ ГОРОД</option>';
     }
 
-    // Показ/скрытие строки «Город»
     if (cityRow){
       if (hasCountry){
         cityRow.classList.remove('is-collapsed');
-        requestAnimationFrame(()=> requestAnimationFrame(placeBand));
       }else{
         cityRow.classList.add('is-collapsed');
       }
@@ -232,6 +264,9 @@ document.addEventListener('DOMContentLoaded', function() {
     // Кастомный селект «Город»
     syncNiceFromSelect(citySel, cityNice, cityList);
     cityNice.setAttribute('aria-disabled', citySel.disabled ? 'true' : 'false');
+
+    // Пересчёт после анимации (на случай мгновенного открытия списка)
+    requestAnimationFrame(()=> requestAnimationFrame(placeBand));
   }
 
   function computeAndApply(source){
@@ -240,7 +275,7 @@ document.addEventListener('DOMContentLoaded', function() {
     applyProfile(profile, split);
   }
 
-  /* ---------- Кастомный select с подчеркиванием по слову ---------- */
+  /* ---------- Кастомный select ---------- */
   function optionId(selectEl, value){ const safe = String(value).replace(/[^a-z0-9_-]/gi,''); return selectEl.id + '-opt-' + safe; }
   function buildOptions(selectEl, listEl){
     const frag = document.createDocumentFragment();
@@ -250,8 +285,8 @@ document.addEventListener('DOMContentLoaded', function() {
     opts.forEach(o=>{
       const div = document.createElement('div');
       div.className='nice-option'; div.setAttribute('role','option');
-      div.id = optionId(selectEl, o.value); 
-      div.dataset.value = o.value; 
+      div.id = optionId(selectEl, o.value);
+      div.dataset.value = o.value;
       const t = document.createElement('span'); t.className = 't'; t.textContent = o.textContent;
       div.appendChild(t);
       if (o.selected) div.setAttribute('aria-selected','true');

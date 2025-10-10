@@ -2,11 +2,31 @@
 // ===== Глобальная блокировка нативной прокрутки, пока открыт дропдаун =====
 const blockScrollOnOpen = (e) => {
   if (document.body.classList.contains('nav-open')) {
-    e.preventDefault(); // глушим колесо/инерцию/свайпы
+    // Не блокируем скролл внутри .nice-options!
+    if (e.target.closest('.nice-options')) return;
+    e.preventDefault();
   }
 };
-window.addEventListener('wheel',     blockScrollOnOpen, { passive:false }); // важно: not passive
-window.addEventListener('touchmove', blockScrollOnOpen, { passive:false }); // важно: not passive
+window.addEventListener('wheel', blockScrollOnOpen, { passive: false });
+window.addEventListener('touchmove', blockScrollOnOpen, { passive: false });
+
+// ... остальной код nav.js ...
+
+// Добавляем поведение для появления полосы прокрутки при скролле
+document.addEventListener('DOMContentLoaded', () => {
+  // ... существующие инициализации выпадающих меню
+
+  document.querySelectorAll('.nice-options').forEach(list => {
+    let scrollTimer = null;
+    list.addEventListener('scroll', () => {
+      list.classList.add('scrolling');
+      clearTimeout(scrollTimer);
+      scrollTimer = setTimeout(() => {
+        list.classList.remove('scrolling');
+      }, 400); // 0.4 секунды после последнего скролла полоска скрывается
+    });
+  });
+});
 
 // ===== header sizing =====
 function setHeaderVars(){
@@ -125,23 +145,48 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // Hover/Focus/Pointer по кнопкам
-  buttons.forEach(btn => {
-    const key = btn.dataset.key;
-    btn.addEventListener('pointerenter', () => { cancelClose(); showPanelForKey(key); }); // pointerenter — предпочтителен для унифицированного ввода [MDN Pointer events]
-    btn.addEventListener('pointerleave', () => { scheduleClose(GRACE_CLOSE_MS); });
-    btn.addEventListener('focus', () => { cancelClose(); showPanelForKey(key); });
-    btn.addEventListener('blur', () => { scheduleClose(GRACE_CLOSE_MS); });
-    btn.addEventListener('click', (e) => {
-      e.preventDefault();
-      e.stopPropagation();
-      if (openKey === String(key) && panel.classList.contains('show')) {
-        closePanelNow();
-      } else {
-        cancelClose();
-        showPanelForKey(key);
-      }
-    });
+let hoverTimer = null; // в начале DOMContentLoaded
+
+buttons.forEach(btn => {
+  const key = btn.dataset.key;
+
+  btn.addEventListener('pointerenter', () => {
+    clearTimeout(hoverTimer);
+    hoverTimer = setTimeout(() => {
+      cancelClose();
+      showPanelForKey(key);
+    }, 200); // задержка 0.2 секунды
   });
+
+  btn.addEventListener('pointerleave', () => {
+    clearTimeout(hoverTimer);
+    scheduleClose(GRACE_CLOSE_MS);
+  });
+
+  btn.addEventListener('focus', () => {
+    clearTimeout(hoverTimer);
+    cancelClose();
+    showPanelForKey(key);
+  });
+
+  btn.addEventListener('blur', () => {
+    clearTimeout(hoverTimer);
+    scheduleClose(GRACE_CLOSE_MS);
+  });
+
+  btn.addEventListener('click', (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    clearTimeout(hoverTimer);
+    if (openKey === String(key) && panel.classList.contains('show')) {
+      closePanelNow();
+    } else {
+      cancelClose();
+      showPanelForKey(key);
+    }
+  });
+});
+
 
   // Удерживаем панель открытой пока указатель/фокус внутри
   const headerBottom = document.querySelector('.header-bottom');

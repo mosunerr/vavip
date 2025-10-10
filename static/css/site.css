@@ -72,25 +72,50 @@ header .header-right a { color: #ffffff; }
 .menu-item-button:hover .menu-label::after{ transform:scaleX(1); }
 .menu-item-button.inactive { color: rgba(255,255,255,0.3); }
 
-/* ===== Dropdown panel ===== */
-:root { --dropdown-speed: 0.45s; --menu-x: 40px; --menu-r: 40px; --header-h: 0px; }
-.dropdown-content{
-  position: fixed; left: 0; right: 0; top: 0;
+/* ===== Dropdown panel =====  top: calc(var(--header-h) - 1px); */
+:root { --dropdown-speed: 0.5s; --menu-x: 40px; --menu-r: 40px; --header-h: 0px; }
+.dropdown-content {
+  position: absolute;
+  top: calc(var(--header-h) - 1px);  /* сразу под шапкой */
+  left: 0; right: 0;
+  height: 82vh; /* ← регулирует ВЕСЬ выпадающий блок */
   width: 100%;
-  height: calc(63vh + var(--header-h));
-  background: #121416; color: #c0c0c0;
-  overflow-y: auto;
-  padding-top: calc(var(--header-h) + 66px); padding-bottom: 60px;
-  visibility: hidden; opacity: 0; transform: translateY(-6px);
+  background: #121416;
+  color: #c0c0c0;
+  overflow: hidden;
+  padding: 0;
+  pointer-events: none;
+  opacity: 0;
+  transform: translateY(-100%); /* скрыт полностью сверху */
   transition: opacity var(--dropdown-speed) ease, transform var(--dropdown-speed) ease;
-  border-radius: 0 0 4px 4px; z-index: 950;
-  display: flex; flex-direction: column;
+  border-radius: 0 0 4px 4px;
+  z-index: 950;
 }
-.dropdown-content.show{ visibility: visible; opacity: 1; transform: translateY(0); }
-.dropdown-inner { position: relative; display: flex; flex-direction: column; height: 100%; }
+
+.dropdown-content.show {
+  pointer-events: auto;
+  opacity: 1;
+  transform: translateY(0);     /* полностью опущен под шапку */
+}
+
+.dropdown-inner {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  height: 60vh;             /* контент внутри занимает 60% окна */
+  overflow-y: auto;         /* скролл если гифки/карты превышают высоту */
+  padding-top: 100px;        /* немного отступа сверху */
+  padding-bottom: 180px;     /* и снизу */
+  width: 100%;       /* 80% ширины окна */
+  margin: 0 auto;   /* центр */
+}
+
 .dropdown-sections { flex: 1 1 auto; min-height: 0; }
 .dropdown-section { display: none; height: 0; }
 .dropdown-section.active { display: block; height: 100%; }
+
+
+
 
 /* Прочие разделы (позиционные блоки) */
 .dropdown-left {
