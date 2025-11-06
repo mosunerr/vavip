@@ -1,56 +1,96 @@
-{# templates/dropdowns/contacts.html #}
-<section class="dropdown-section" data-key="0" role="region" aria-labelledby="menu-contacts">
+<section class="dropdown-section contacts-section" data-key="0" role="region" aria-labelledby="menu-contacts">
   <div class="contacts-combined" role="group" aria-label="КОНТАКТЫ">
     <div class="contacts-overlay" aria-hidden="true"></div>
-    <!-- Левая половина: «пилюли» выбора -->
-    <form class="contacts-form" action="#" method="get" aria-label="Выбор направления">
-      <div class="form-row">
-        <select id="country-select" name="country" aria-label="Страна" required>
-          <option value="" selected disabled hidden>ВЫБЕРИТЕ СТРАНУ</option>
-          <option value="ru">РОССИЯ</option>
-          <option value="by">БЕЛАРУСЬ</option>
-          <option value="ge">ГРУЗИЯ</option>
-          <option value="kz">КАЗАХСТАН</option>
-          <option value="ae">ОАЭ</option>
-        </select>
-        <!-- Видимая «пилюля» вместо нативного select -->
-        <div class="nice-select" id="country-nice"
-             role="combobox" aria-expanded="false" aria-haspopup="listbox"
-             aria-controls="country-list" tabindex="0" data-for="country-select" aria-activedescendant="">
-          <div class="label">ВЫБЕРИТЕ СТРАНУ</div>
-        </div>
-        <div class="nice-options" id="country-list" role="listbox" hidden></div>
+
+    <div class="contacts-left">
+      <div class="contacts-mini-header" hidden>
+        <button class="mini-nav-item" data-section="uzel">УЗЕЛ ВВОДА</button>
+        <button class="mini-nav-item" data-section="project">ПРОЕКТИРОВАНИЕ</button>
+        <button class="mini-nav-item" data-section="montage">МОНТАЖ</button>
+        <button class="mini-nav-item" data-section="shop">МАГАЗИН</button>
       </div>
-      <div class="form-row">
-        <select id="city-select" name="city" aria-label="Город" disabled>
-          <option value="" selected disabled hidden>ВЫБЕРИТЕ ГОРОД</option>
-        </select>
-        <!-- Видимая «пилюля» вместо нативного select -->
-        <div class="nice-select" id="city-nice"
-             role="combobox" aria-expanded="false" aria-haspopup="listbox"
-             aria-controls="city-list" tabindex="0" data-for="city-select" aria-disabled="true" aria-activedescendant="">
-          <div class="label">ВЫБЕРИТЕ ГОРОД</div>
-        </div>
-        <div class="nice-options" id="city-list" role="listbox" hidden></div>
+
+      <div class="contacts-tiles hero-grid" role="group" aria-label="Разделы контактов">
+        <button type="button" class="tile hero-tile" data-tile="uzel" style="--tile-img-1: url('{{ url_for('static', filename='images/contacts/words/word-1.jpg') }}');">
+          <div class="layer-1"></div>
+          <div class="layer-2"></div>
+          <span class="tile-title hero-title">УЗЕЛ ВВОДА</span>
+        </button>
+        <button type="button" class="tile hero-tile" data-tile="project" style="--tile-img-1: url('{{ url_for('static', filename='images/contacts/words/word-2.jpg') }}');">
+          <div class="layer-1"></div>
+          <div class="layer-2"></div>
+          <span class="tile-title hero-title">ПРОЕКТИРОВАНИЕ</span>
+        </button>
+        <!-- ВАЖНО: здесь ДОЛЖЕН быть montage + word-3 + текст "МОНТАЖ" -->
+        <button type="button" class="tile hero-tile" data-tile="montage" style="--tile-img-1: url('{{ url_for('static', filename='images/contacts/words/word-3.jpg') }}');">
+          <div class="layer-1"></div>
+          <div class="layer-2"></div>
+          <span class="tile-title hero-title">МОНТАЖ</span>
+        </button>
+        <!-- ВАЖНО: здесь ДОЛЖЕН быть shop + word-4 + текст "МАГАЗИН" -->
+        <button type="button" class="tile hero-tile" data-tile="shop" style="--tile-img-1: url('{{ url_for('static', filename='images/contacts/words/word-4.jpg') }}');">
+          <div class="layer-1"></div>
+          <div class="layer-2"></div>
+          <span class="tile-title hero-title">МАГАЗИН</span>
+        </button>
       </div>
-    </form>
-    <!-- Правая половина: по умолчанию ТОЛЬКО фон-карта, без надписей -->
+
+      <div class="contacts-location" hidden>
+        <div class="location-inner" role="group" aria-label="Выбор местоположения">
+          <nav class="location-mini-header" aria-label="Разделы">
+            <button class="mini-link" data-section="uzel" type="button">УЗЕЛ ВВОДА</button>
+            <button class="mini-link" data-section="project" type="button">ПРОЕКТИРОВАНИЕ</button>
+            <button class="mini-link" data-section="montage" type="button">МОНТАЖ</button>
+            <button class="mini-link" data-section="shop" type="button">МАГАЗИН</button>
+          </nav>
+          <div class="location-gap"></div>
+          <span class="location-title">ВЫБЕРИТЕ МЕСТОПОЛОЖЕНИЕ</span>
+          <button class="back-to-countries" type="button" hidden aria-label="Назад к странам">
+            <span class="back-arrow">
+              <svg viewBox="0 0 22 22">
+                <polyline points="14,4 6,11 14,18" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </span>
+            <span class="back-text">НАЗАД</span>
+          </button>
+          <ul class="countries-list" role="list">
+            <li><button class="country-link" data-country="ru" type="button">РОССИЯ</button></li>
+            <li><button class="country-link" data-country="by" type="button">БЕЛАРУСЬ</button></li>
+            <li><button class="country-link" data-country="kz" type="button">КАЗАХСТАН</button></li>
+            <li><button class="country-link" data-country="ge" type="button">ГРУЗИЯ</button></li>
+            <li><button class="country-link" data-country="ae" type="button">ОАЭ</button></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="contacts-city-info" id="contacts-city-info" hidden>
+        <img id="city-photo" src="" alt="">
+        <div id="city-contacts"></div>
+      </div>
+    </div>
+
     <div class="contacts-right-col" id="contacts-right">
-      <div class="contacts-info-area" id="contacts-info" hidden>
-        <p class="contacts-phone"><a id="contacts-phone-link" href="tel:+74950000000">+7 (495) 000‑00‑00</a></p>
-        <p class="contacts-hours" id="contacts-hours-text">ПН-ПТ 09:00–19:00</p>
-        <div class="contacts-actions-row">
-          <button id="feedback-open-btn" type="button" class="btn btn-chip">ОБРАТНАЯ СВЯЗЬ</button>
-          <div class="contacts-icons-row">
-            <a class="social-icon telegram" href="https://t.me/karen_vavip" target="_blank" rel="noopener noreferrer" aria-label="Telegram">
-              <img src="{{ url_for('static', filename='images/icons/telegram.svg') }}" alt="Telegram">
-            </a>
-            <a class="social-icon whatsapp" href="https://wa.me/79312487013" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp">
-              <img src="{{ url_for('static', filename='images/icons/whatsapp1.svg') }}" alt="WhatsApp">
-            </a>
+      <div class="contacts-info-area" id="contacts-info">
+        <!-- ДОБАВЛЕН id="contacts-basics" для совместимости с JS -->
+        <div id="contacts-basics" class="contacts-center-group">
+          <p class="contacts-phone">
+            <a id="contacts-phone-link" href="tel:+79312487013">+7 (931) 248-70-13</a>
+          </p>
+          <p class="contacts-hours" id="contacts-hours-text">ПН-ПТ 09:00–19:00</p>
+          <div class="contacts-actions-row">
+            <button id="feedback-open-btn" type="button" class="btn btn-chip">ОБРАТНАЯ СВЯЗЬ</button>
+            <div class="contacts-icons-row">
+              <a class="social-icon telegram" href="https://t.me/karen_vavip" target="_blank" rel="noopener noreferrer">
+                <img src="{{ url_for('static', filename='images/icons/telegram.svg') }}" alt="Telegram">
+              </a>
+              <a class="social-icon whatsapp" href="https://wa.me/79312487013" target="_blank" rel="noopener noreferrer">
+                <img src="{{ url_for('static', filename='images/icons/whatsapp1.svg') }}" alt="WhatsApp">
+              </a>
+            </div>
           </div>
         </div>
       </div>
     </div>
+
   </div>
 </section>

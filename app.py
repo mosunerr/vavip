@@ -1,7 +1,7 @@
 import os
 from flask import Flask, render_template
 
-# Абсолютные пути к проекту
+# Абсолютные пути к ПРОЕКТИРОВАНИЕ BIMу
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 TEMPLATES_DIR = os.path.join(BASE_DIR, 'templates')
 STATIC_DIR = os.path.join(BASE_DIR, 'static')
@@ -17,4 +17,4 @@ def main_home():
 
 if __name__ == '__main__':
     # На проде debug=False; порт/хост можно оставить как есть для разработки
-    app.run(debug=True, host='0.0.0.0', port=5000)
+    app.run(debug=True, host='0.0.0.0', port=5002)

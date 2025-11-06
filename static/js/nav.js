@@ -73,7 +73,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const vw = window.innerWidth || document.documentElement.clientWidth;
     const left = Math.max(16, Math.round(rectL.left));           // левая направляющая: «КОНТАКТЫ»
-    const rightGap = Math.max(16, Math.round(vw - rectR.right)); // правая направляющая: «МАГАЗИН»
+    const rightGap = Math.max(16, Math.round(vw - rectR.right)); // правая направляющая: «МАГАЗИН »
 
     // Пробрасываем направляющие как CSS‑переменные панели
     panel.style.setProperty('--menu-x', left + 'px');            // слева
