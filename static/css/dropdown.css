@@ -1,0 +1,100 @@
+/* dropdown.css (модуль дропдауна: позиционирование, анимация, блоки left/right) */
+/* Version: 1 - Вынос из site.css для модульности, оригинальные селекторы */
+
+/* ===== Dropdown panel ===== */
+.dropdown-content {
+  position: absolute;
+  top: calc(var(--header-h) - 1px);
+  left: 0;
+  right: 0;
+  height: 82vh;
+  width: 100%;
+  background: #121416;
+  color: #c0c0c0;
+  padding: 0;
+  pointer-events: none;
+  opacity: 0;
+  transform: translateY(-100%);
+  transition: opacity var(--dropdown-speed), transform var(--dropdown-speed);
+  border-radius: 0 0 var(--border-radius) var(--border-radius);
+  z-index: 950;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.dropdown-content.show {
+  pointer-events: auto;
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.dropdown-inner {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow-y: auto;
+  padding: 100px 0 180px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+.dropdown-sections {
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+.dropdown-section {
+  display: none;
+  height: 0;
+}
+
+.dropdown-section.active {
+  display: block;
+  height: 100%;
+}
+
+/* Позиционные блоки внутри дропдауна */
+.dropdown-left {
+  position: absolute;
+  top: 0;
+  left: var(--menu-x);
+  min-width: 330px;
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+}
+
+.dropdown-left h2 {
+  margin: 0 0 18px;
+  color: #c0c0c0;
+  font-size: 2rem;
+  font-weight: 700;
+}
+
+.dropdown-left ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.dropdown-left li {
+  margin-bottom: 10px;
+  font-size: 1rem;
+}
+
+.dropdown-right {
+  position: absolute;
+  top: 0;
+  left: calc(var(--menu-x) + 350px);
+  width: 300px;
+  max-width: 30vw;
+}
+
+.dropdown-right img {
+  width: 100%;
+  height: auto;
+  border-radius: var(--border-radius);
+  object-fit: cover;
+}

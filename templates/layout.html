@@ -1,4 +1,4 @@
-<!-- 1 templates/layout.html -->
+<!-- templates/layout.html -->
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -6,32 +6,47 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>{% block title %}Vavip{% endblock %}</title>
 
-  <!-- Подключение шрифта Gotham -->
-  <link href="https://fonts.cdnfonts.com/css/gotham" rel="stylesheet">
+  <!-- Preload шрифта для производительности (mobile-first) -->
+  <link rel="preload" href="https://fonts.cdnfonts.com/css/gotham" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <noscript><link rel="stylesheet" href="https://fonts.cdnfonts.com/css/gotham"></noscript>
 
+  <!-- Основные CSS: site.css как базовый, dropdowns по необходимости -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/header.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/dropdown.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/contacts.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/footer.css') }}">
   <link rel="stylesheet" href="{{ url_for('static', filename='css/site.css') }}">
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/dropdowns/about.css') }}">
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/dropdowns/node.css') }}">
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/dropdowns/bim.css') }}">
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/dropdowns/montage.css') }}">
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/dropdowns/shop.css') }}">
+  <link rel="preload" href="{{ url_for('static', filename='css/dropdowns/about.css') }}" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <link rel="preload" href="{{ url_for('static', filename='css/dropdowns/node.css') }}" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <link rel="preload" href="{{ url_for('static', filename='css/dropdowns/bim.css') }}" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <link rel="preload" href="{{ url_for('static', filename='css/dropdowns/montage.css') }}" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <link rel="preload" href="{{ url_for('static', filename='css/dropdowns/shop.css') }}" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <noscript>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dropdowns/about.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dropdowns/node.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dropdowns/bim.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dropdowns/montage.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dropdowns/shop.css') }}">
+  </noscript>
   {% block head_extra %}{% endblock %}
 </head>
 <body>
-
-  <!-- Мобильный верхний бар (логотип по центру + поиск/телефон справа) -->
-  <div class="mobile-bar" aria-label="Мобильная шапка">
+  <!-- Мобильный бар (div, не header), чтобы не конфликтовать с глобальным header {position:fixed} -->
+  <div class="mobile-bar" role="banner" aria-label="Мобильная шапка сайта">
     <div class="mobile-bar__center">
-      <a href="/"><img src="{{ url_for('static', filename='images/logo.png') }}" alt="Vavip"></a>
+      <a href="{{ url_for('main_home') }}" aria-label="Перейти на главную">
+        <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Логотип Vavip — инженерные решения" width="120" height="40" loading="lazy">
+      </a>
     </div>
     <div class="mobile-bar__right">
-      <a href="tel:+79312487013" class="icon-btn phone" aria-label="Позвонить">
-        <svg viewBox="0 0 24 24" width="20" height="20" xmlns="http://www.w3.org/2000/svg">
+      <a href="tel:+79312487013" class="icon-btn phone" aria-label="Позвонить по номеру +7 (931) 248-70-13">
+        <svg viewBox="0 0 24 24" width="20" height="20" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
           <path d="M6.6 10.8c1.6 3 3.6 5 6.6 6.6l2.2-2.2c.3-.3.8-.4 1.1-.2 1 .4 2.1.7 3.2.8.5.1.9.5.9 1V20c0 .6-.4 1-1 1C10.9 21 3 13.1 3 3c0-.6.4-1 1-1h3.2c.5 0 .9.4 1 .9.2 1.1.4 2.2.8 3.2.1.4 0 .8-.2 1.1L6.6 10.8z" fill="#fff"/>
         </svg>
       </a>
-      <a href="#" class="icon-btn search" aria-label="Поиск">
-        <svg viewBox="0 0 24 24" width="20" height="20" xmlns="http://www.w3.org/2000/svg">
+      <a href="#" class="icon-btn search" aria-label="Открыть поиск" role="button">
+        <svg viewBox="0 0 24 24" width="20" height="20" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
           <circle cx="10.5" cy="10.5" r="7.5" stroke="#fff" stroke-width="2" fill="none"/>
           <line x1="16" y1="16" x2="21" y2="21" stroke="#fff" stroke-width="2"/>
         </svg>
@@ -42,16 +57,18 @@
   {% include "header.html" %}
 
   {% block video_fullscreen %}{% endblock %}
-  <main id="main-content" tabindex="-1">{% block content %}{% endblock %}</main>
+  
+  <main id="main-content" role="main" tabindex="-1">{% block content %}{% endblock %}</main>
 
   {% block footer %}
-  <footer class="site-footer">
-    {% include "footer.html" %}
-  </footer>
+    <footer class="site-footer" role="contentinfo">
+      {% include "footer.html" %}
+    </footer>
   {% endblock %}
 
-  <script src="{{ url_for('static', filename='js/nav.js') }}"></script>
-  <script src="{{ url_for('static', filename='js/contacts.js') }}"></script>
+  <!-- Скрипты в конце для быстрой загрузки DOM -->
+  <script src="{{ url_for('static', filename='js/nav.js') }}" defer></script>
+  <script src="{{ url_for('static', filename='js/contacts.js') }}" defer></script>
   {% block scripts_extra %}{% endblock %}
 </body>
 </html>

@@ -2,6 +2,66 @@
   <div class="contacts-combined" role="group" aria-label="КОНТАКТЫ">
     <div class="contacts-overlay" aria-hidden="true"></div>
 
+<!-- ПЕРЕНЕСЁННЫЙ overlay формы: теперь дочерний .contacts-combined -->
+<div id="feedback-form" class="feedback-panel" style="display:none; position:absolute; inset:0; background:rgba(0,0,0,.6); z-index:100; pointer-events:auto; overflow:auto;">
+  <form method="POST" action="{{ url_for('feedback') }}" class="feedback-form"
+        style="background:#282727; border-radius:0; box-shadow:0 8px 24px rgba(0,0,0,.15);
+               width:100%; max-width:none; margin:0; padding:0; box-sizing:border-box;">
+    <!-- Крестик закрытия (белый, в правом верхнем углу) -->
+    <button type="button" class="form-close" aria-label="Закрыть форму"
+            style="position:absolute; top:20px; right:20px; width:32px; height:32px;
+                   display:flex; align-items:center; justify-content:center;
+                   background:transparent; border:none; color:#ffffff; font-size:24px; line-height:1; cursor:pointer; z-index:1;">
+      ×
+    </button>
+
+    <!-- Центрируем поля внутри темного фона (исходные размеры: max-width 900px, margin auto) -->
+    <div class="form-inner"
+         style="max-width:900px; margin:28px auto; padding:32px 48px; box-sizing:border-box;
+                display:grid; grid-template-columns:repeat(12,1fr); gap:24px;">
+      <!-- Первая строка: Тема / Email -->
+      <label for="topic" style="grid-column:1/7; font-weight:600; color:#ffffff;">Тема</label>
+      <label for="email" style="grid-column:7/13; font-weight:600; color:#ffffff;">Email</label>
+
+      <select id="topic" name="topic" required
+              style="grid-column:1/7; padding:18px 22px; border:1px solid #dedede; border-radius:10px; background:#474343; font-size:16px; color:#ffffff;">
+        <option value="quality_products" selected>Качество продуктов, услуг и доставки</option>
+        <option value="support">Техническая поддержка</option>
+        <option value="other">Другое</option>
+      </select>
+      <input id="email" name="email" type="email" required
+             style="grid-column:7/13; padding:18px 22px; border:1px solid #dedede; border-radius:10px; background:#474343; font-size:16px; color:#ffffff;">
+
+      <!-- Вторая строка: Имя* / Телефон* -->
+      <label for="name" style="grid-column:1/7; font-weight:600; color:#ffffff; display:flex; align-items:center; gap:6px;">
+        Имя <span aria-hidden="true" style="color:#e56b2f;">*</span>
+      </label>
+      <label for="phone" style="grid-column:7/13; font-weight:600; color:#ffffff; display:flex; align-items:center; gap:6px;">
+        Телефон <span aria-hidden="true" style="color:#e56b2f;">*</span>
+      </label>
+
+      <input id="name" name="name" type="text" required
+             style="grid-column:1/7; padding:18px 22px; border:1px solid #dedede; border-radius:10px; background:#474343; font-size:16px; color:#ffffff;">
+      <input id="phone" name="phone" type="tel" required placeholder="+7 (___) ___-__-__"
+             style="grid-column:7/13; padding:18px 22px; border:1px solid #dedede; border-radius:10px; background:#474343; font-size:16px; color:#ffffff;">
+
+      <!-- Третья строка: Комментарий -->
+      <label for="message" style="grid-column:1/13; font-weight:600; color:#ffffff;">Комментарий</label>
+      <textarea id="message" name="message" required rows="2"
+                style="grid-column:1/13; padding:18px 22px; border:1px solid #dedede; border-radius:10px; background:#474343; font-size:16px; resize:vertical; color:#ffffff;"></textarea>
+
+      <!-- Кнопка отправки по центру -->
+      <div style="grid-column:1/13; display:flex; justify-content:center; margin-top:8px;">
+        <button type="submit"
+                style="padding:14px 28px; border:2px solid #f0c7ad; background:#282727; color:#ffffff; font-weight:600; border-radius:28px; cursor:pointer;">
+          ОТПРАВИТЬ
+        </button>
+      </div>
+    </div>
+  </form>
+</div>
+
+
     <div class="contacts-left">
       <div class="contacts-mini-header" hidden>
         <button class="mini-nav-item" data-section="uzel">УЗЕЛ ВВОДА</button>
@@ -21,13 +81,11 @@
           <div class="layer-2"></div>
           <span class="tile-title hero-title">ПРОЕКТИРОВАНИЕ</span>
         </button>
-        <!-- ВАЖНО: здесь ДОЛЖЕН быть montage + word-3 + текст "МОНТАЖ" -->
         <button type="button" class="tile hero-tile" data-tile="montage" style="--tile-img-1: url('{{ url_for('static', filename='images/contacts/words/word-3.jpg') }}');">
           <div class="layer-1"></div>
           <div class="layer-2"></div>
           <span class="tile-title hero-title">МОНТАЖ</span>
         </button>
-        <!-- ВАЖНО: здесь ДОЛЖЕН быть shop + word-4 + текст "МАГАЗИН" -->
         <button type="button" class="tile hero-tile" data-tile="shop" style="--tile-img-1: url('{{ url_for('static', filename='images/contacts/words/word-4.jpg') }}');">
           <div class="layer-1"></div>
           <div class="layer-2"></div>
@@ -71,7 +129,6 @@
 
     <div class="contacts-right-col" id="contacts-right">
       <div class="contacts-info-area" id="contacts-info">
-        <!-- ДОБАВЛЕН id="contacts-basics" для совместимости с JS -->
         <div id="contacts-basics" class="contacts-center-group">
           <p class="contacts-phone">
             <a id="contacts-phone-link" href="tel:+79312487013">+7 (931) 248-70-13</a>

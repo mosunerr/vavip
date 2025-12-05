@@ -1,4 +1,4 @@
-<!-- 3 templates/main_index.html -->
+<!-- templates/main_index.html -->
 {% extends "layout.html" %}
 
 {% block title %}Главная страница Vavip{% endblock %}
@@ -8,56 +8,65 @@
 {% endblock %}
 
 {% block video_fullscreen %}
-<div class="video-section">
-  <video autoplay muted loop playsinline preload="metadata" aria-hidden="true" poster="{{ url_for('static', filename='images/video-poster.jpg') }}">
-    <source src="{{ url_for('static', filename='videos/background1.mp4') }}" type="video/mp4">
-  </video>
-  <div class="video-caption">УЗЕЛ ВВОДА</div>
-  <a class="section-link"
-     href="{{ url_for('main_home') }}"
-     target="_self"
-     rel="noopener"
-     aria-label="Перейти на главную"></a>
-</div>
+<div class="video-sections-wrapper">
+  <!-- Первая секция -->
+  <section class="video-section" aria-labelledby="caption-1">
+    <video autoplay muted loop playsinline preload="metadata" aria-hidden="true">
+      <source src="{{ url_for('static', filename='videos/background1.mp4') }}" type="video/mp4">
+      <img src="{{ url_for('static', filename='images/video-poster.jpg') }}" alt="Фон: Узел ввода" class="video-poster">
+    </video>
+    <h2 id="caption-1" class="video-caption">УЗЕЛ ВВОДА</h2>
+    <a class="section-link"
+       href="{{ url_for('main_home') }}"
+       target="_self"
+       rel="noopener"
+       aria-label="Перейти на главную страницу"></a>
+  </section>
 
-<!--  мобильная полоса разделов сразу под первым видео (видимость настроим в CSS) -->
-<nav class="mobile-strip" aria-label="Разделы (моб.)">
-  <span>УЗЕЛ ВВОДА</span>
-  <span>МАГАЗИН</span>
-  <span>КОРЗИНА</span>
-  <span>КАБИНЕТ</span>
-</nav>
+  <!-- Мобильная навигация под первой секцией -->
+  <nav class="mobile-strip" aria-label="Навигация по разделам (мобильная версия)">
+    <button class="mobile-nav-item" data-section="uzel" aria-label="Узел ввода">УЗЕЛ ВВОДА</button>
+    <button class="mobile-nav-item" data-section="magazin" aria-label="Магазин">МАГАЗИН</button>
+    <button class="mobile-nav-item" data-section="korzina" aria-label="Корзина">КОРЗИНА</button>
+    <button class="mobile-nav-item" data-section="kabinet" aria-label="Кабинет">КАБИНЕТ</button>
+  </nav>
 
+  <!-- Вторая секция -->
+  <section class="video-section" aria-labelledby="caption-2">
+    <video autoplay muted loop playsinline preload="metadata" aria-hidden="true">
+      <source src="{{ url_for('static', filename='videos/background2.mp4') }}" type="video/mp4">
+      <img src="{{ url_for('static', filename='images/video-poster2.jpg') }}" alt="Фон: Проектирование BIM" class="video-poster">
+    </video>
+    <h2 id="caption-2" class="video-caption">ПРОЕКТИРОВАНИЕ BIM</h2>
+  </section>
 
-<div class="video-section">
-  <video autoplay muted loop playsinline preload="metadata" aria-hidden="true" poster="{{ url_for('static', filename='images/video-poster2.jpg') }}">
-    <source src="{{ url_for('static', filename='videos/background2.mp4') }}" type="video/mp4">
-  </video>
-  <div class="video-caption">ПРОЕКТИРОВАНИЕ BIM</div>
-</div>
+  <!-- Третья секция -->
+  <section class="video-section" aria-labelledby="caption-3">
+    <video autoplay muted loop playsinline preload="metadata" aria-hidden="true">
+      <source src="{{ url_for('static', filename='videos/background3.mp4') }}" type="video/mp4">
+      <img src="{{ url_for('static', filename='images/video-poster3.jpg') }}" alt="Фон: Монтаж" class="video-poster">
+    </video>
+    <h2 id="caption-3" class="video-caption">МОНТАЖ</h2>
+  </section>
 
-<div class="video-section">
-  <video autoplay muted loop playsinline preload="metadata" aria-hidden="true" poster="{{ url_for('static', filename='images/video-poster3.jpg') }}">
-    <source src="{{ url_for('static', filename='videos/background3.mp4') }}" type="video/mp4">
-  </video>
-  <div class="video-caption">МОНТАЖ</div>
-</div>
-
-<div class="video-section" id="fourth-section">
-  <video autoplay muted loop playsinline preload="metadata" aria-hidden="true" poster="{{ url_for('static', filename='images/video-poster4.jpg') }}">
-    <source src="{{ url_for('static', filename='videos/background4.mp4') }}" type="video/mp4">
-  </video>
-  <div class="video-caption">МАГАЗИН</div>
-
-  <footer class="video-footer hidden" id="video-footer">
-    {% include "footer.html" %}
-  </footer>
+  <!-- Четвёртая секция с футером (локальный, без глобального дубликата) -->
+  <section class="video-section" id="fourth-section" aria-labelledby="caption-4">
+    <video autoplay muted loop playsinline preload="metadata" aria-hidden="true">
+      <source src="{{ url_for('static', filename='videos/background4.mp4') }}" type="video/mp4">
+      <img src="{{ url_for('static', filename='images/video-poster4.jpg') }}" alt="Фон: Магазин" class="video-poster">
+    </video>
+    <h2 id="caption-4" class="video-caption">МАГАЗИН</h2>
+    <footer class="video-footer hidden" id="video-footer" role="contentinfo">
+      {% include "footer.html" %}
+    </footer>
+  </section>
 </div>
 {% endblock %}
 
-{% block content %}{% endblock %}
-
+<!-- Переопределяем глобальный футер пустотой, чтобы не дублировать на главной -->
 {% block footer %}{% endblock %}
+
+{% block content %}{% endblock %}
 
 {% block scripts_extra %}
 <script src="{{ url_for('static', filename='js/home.js') }}"></script>

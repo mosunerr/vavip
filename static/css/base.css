@@ -1,0 +1,115 @@
+/* static/css/base.css */
+/* ===== База: глобальные переменные, ресеты и утилиты ===== */
+/* Версия: извлечено из site.css для модульности */
+
+/* Глобальные CSS‑переменные (токены дизайна) */
+:root {
+  /* Времена анимаций и переходов */
+  --transition-fast: .2s ease;
+  --transition-medium: .3s ease;
+  --transition-slow: .35s ease;
+  --transition-dropdown: .7s;                 /* скорость открытия дропдауна */
+  --dropdown-speed: var(--transition-dropdown);
+  --transition-long: .6s ease;                /* «длинный» плавный фейд (0.6s) */
+
+  /* Базовые размеры и отступы */
+  --menu-x: 40px;                              /* смещение левой колонки в дропдауне */
+  --header-h: 0px;                             /* высота фиксированного header (для scroll-padding) */
+  --border-radius: 4px;
+
+  /* Тени для текста */
+  --text-shadow-light: 0 2px 8px rgba(0,0,0,0.6);
+  --text-shadow-medium: 0 2px 10px rgba(0,0,0,.45);
+  --text-shadow-heavy: 0 6px 22px rgba(0,0,0,.55);
+
+  /* Стили фокуса (доступность) */
+  --focus-outline: 2px solid #9ec1ff;         /* видимая рамка фокуса */
+  --focus-offset: 2px;                         /* отступ рамки от элемента */
+
+  /* Цвета бренда и hover‑эффекты */
+  --hover-bg: rgba(23,165,111,.30);
+  --hover-stroke: #17a56f;
+  --phone-color: #fff;
+
+  /* Визуалы для «Контактов» */
+  --photo-dim: 0.8;                            /* затемнение фото слева */
+  --city-bg: url("/static/images/contacts/contacts-bg-anim.gif");
+  --city-bg-current: var(--city-bg);
+  --city-bg-next: none;
+
+  /* Полосы‑градиенты overlay (регулируемые) */
+  --mini-top-h: 92px;                          /* высота верхней полосы */
+  --mini-top-a: .68;                           /* интенсивность верха */
+  --mini-bot-h: 182px;                         /* высота нижней полосы */
+  --mini-bot-a: .68;                           /* интенсивность низа */
+}
+
+/* Базовая типографика и поведение прокрутки */
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  background: #0a0a0a;
+  color: #fff;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  box-sizing: border-box;
+  overflow-x: hidden;
+  scrollbar-width: thin;                        /* Firefox */
+  scrollbar-color: #1f2228 transparent;        /* Firefox */
+}
+
+/* Наследуем box-sizing для всех элементов */
+*, *::before, *::after {
+  box-sizing: inherit;
+}
+
+/* Плавная прокрутка и компенсация фиксированной шапки */
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: var(--header-h, 0px);
+}
+
+/* Кастомный скроллбар (WebKit: Safari/Chrome) */
+body::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+body::-webkit-scrollbar-track {
+  background: transparent;
+}
+body::-webkit-scrollbar-thumb {
+  background-color: #6b7280;
+  border-radius: 6px;
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+body::-webkit-scrollbar-thumb:hover {
+  background-color: #9ca3af;
+}
+
+/* Базовый видимый фокус для всех элементов (WCAG) */
+:focus-visible {
+  outline: var(--focus-outline);
+  outline-offset: var(--focus-offset);
+}
+
+/* Утилита: визуально скрытый контент (читабелен скринридерами) */
+.visually-hidden {
+  position: absolute !important;
+  height: 1px;
+  width: 1px;
+  overflow: hidden;
+  clip: rect(1px, 1px, 1px, 1px);
+  white-space: nowrap;
+  clip-path: inset(50%);
+  border: 0;
+  padding: 0;
+  margin: -1px;
+}
+
+/* Глобальная рамка фокуса для интерактивных элементов */
+/* :where(...) не повышает специфичность — каскад остаётся управляемым */
+:where(a, button, [role="button"], .btn, .menu-item-button, .country-link, .city-link, .social-icon, .icon-btn):focus-visible {
+  outline: var(--focus-outline);
+  outline-offset: var(--focus-offset);
+}

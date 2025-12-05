@@ -15,7 +15,7 @@
 
 body.nav-open .video-section {
   filter: blur(6px);
-  transition: filter 0.3s ease;
+  transition: var(–transition-medium);
 }
 
 /* Убираем прежний «peek» через отрицательный отступ */
@@ -88,7 +88,7 @@ html { scroll-padding-top: var(--header-h, 0px); }
   background-color: #121416;
   z-index: 10;
   opacity: 0;
-  transform: translateY(100%);
+  transform: translateY(100%); 
   transition: opacity 0.4s ease, transform 0.4s ease;
   display: none;
   color: #fff;
@@ -96,7 +96,7 @@ html { scroll-padding-top: var(--header-h, 0px); }
 body.footer-visible #fourth-section .video-caption {
   opacity: 0;
   transform: translate(-50%, 10px);
-  transition: opacity 0.3s ease, transform 0.3s ease;
+  transition: opacity var(–transition-medium), transform var(–transition-medium);
   pointer-events: none;
 }
 .video-footer.shown { display: block; opacity: 1; transform: translateY(0); }

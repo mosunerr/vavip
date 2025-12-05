@@ -1,0 +1,201 @@
+.feedback-panel {
+  display: none; /* Обязательно скрыто по умолчанию */
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, .6);
+  z-index: 100; /* Выше всего в .contacts-combined */
+  pointer-events: auto;
+  overflow: auto;
+}
+
+.feedback-form {
+  background: #282727;
+  border-radius: 0;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, .15);
+  width: 100%;
+  max-width: none;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  position: relative;
+  color: #ffffff;
+}
+
+.form-close {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  color: #ffffff;
+  font-size: 24px;
+  line-height: 1;
+  cursor: pointer;
+  z-index: 1;
+}
+
+.form-inner {
+  max-width: 900px;
+  margin: 28px auto;
+  padding: 32px 48px;
+  box-sizing: border-box;
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 24px;
+}
+
+.form-inner label {
+  font-weight: 600;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* Grid для labels */
+.form-inner label:nth-of-type(1) { /* Тема */
+  grid-column: 1 / 7;
+}
+.form-inner label:nth-of-type(2) { /* Email */
+  grid-column: 7 / 13;
+}
+.form-inner label:nth-of-type(3) { /* Имя */
+  grid-column: 1 / 7;
+}
+.form-inner label:nth-of-type(4) { /* Телефон */
+  grid-column: 7 / 13;
+}
+.form-inner label:nth-of-type(5) { /* Комментарий */
+  grid-column: 1 / 13;
+}
+
+.required {
+  color: #e56b2f;
+}
+
+.form-inner select,
+.form-inner input,
+.form-inner textarea {
+  padding: 18px 22px;
+  border: 1px solid #dedede;
+  border-radius: 10px;
+  background: #474343;
+  font-size: 16px;
+  color: #ffffff;
+  box-sizing: border-box;
+}
+
+/* Grid для полей */
+.form-inner select#topic,
+.form-inner input#name {
+  grid-column: 1 / 7;
+}
+.form-inner input#email,
+.form-inner input#phone {
+  grid-column: 7 / 13;
+}
+.form-inner textarea#message {
+  grid-column: 1 / 13;
+  resize: vertical;
+}
+
+.submit-wrapper {
+  grid-column: 1 / 13;
+  display: flex;
+  justify-content: center;
+  margin-top: 8px;
+}
+
+.submit-wrapper button {
+  padding: 14px 28px;
+  border: 2px solid #f0c7ad;
+  background: #282727;
+  color: #ffffff;
+  font-weight: 600;
+  border-radius: 28px;
+  cursor: pointer;
+  font: inherit;
+}
+
+.feedback-form ::placeholder {
+  color: rgba(255, 255, 255, .6);
+}
+
+/* Адаптивность: Десктоп >1200px (исходные размеры) */
+@media (min-width: 1200px) {
+  .form-inner {
+    max-width: 900px;
+    padding: 32px 48px;
+    gap: 24px;
+  }
+  .form-inner label {
+    font-size: 16px;
+  }
+  .form-inner input,
+  .form-inner select,
+  .form-inner textarea {
+    padding: 18px 22px;
+    font-size: 16px;
+  }
+  .submit-wrapper button {
+    padding: 14px 28px;
+    font-size: 16px;
+  }
+}
+
+/* Планшет 768px-1199px: сужаем, но grid 2-колоночный */
+@media (max-width: 1199px) and (min-width: 768px) {
+  .form-inner {
+    max-width: 100%;
+    width: 100%;
+    margin: 20px auto;
+    padding: 24px 32px;
+    gap: 20px;
+  }
+  .form-inner label {
+    font-size: 15px;
+  }
+  .form-inner input,
+  .form-inner select,
+  .form-inner textarea {
+    padding: 16px 18px;
+    font-size: 15px;
+  }
+  .submit-wrapper button {
+    padding: 12px 24px;
+    font-size: 15px;
+  }
+  .form-close {
+    top: 16px;
+    right: 16px;
+    width: 28px;
+    height: 28px;
+    font-size: 20px;
+  }
+}
+/* 1) Когда форма показана — убираем внутреннюю кромку контейнера */
+@supports selector(:has(*)) {
+  /* Если форму показываешь инлайном display:block */
+  .contacts-combined:has(#feedback-form[style*="display"]) {
+    border: none !important;
+    padding: 0 !important;
+  }
+  /* Вариант под класс .is-open (если позже добавишь JS-класс) */
+  .contacts-combined:has(#feedback-form.is-open) {
+    border: none !important;
+    padding: 0 !important;
+  }
+}
+
+/* 2) Фолбэк без :has — аккуратно перекрываем кромку «внешней» тенью формы */
+@supports not selector(:has(*)) {
+  .feedback-form {
+    /* подбери 1px–2px под свой case */
+    box-shadow: 0 0 0 2px #282727;
+  }
+}

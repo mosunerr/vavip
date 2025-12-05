@@ -1,8 +1,4 @@
-/* static/js/contacts.js — Контакты: города, фото, телефон и панель действий
-   БАЗА: твой вариант. Правки: динамические пути к фото из HTML (--tile-img-1),
-   console.log для отладки (убери после), принудительный z-index/opacity в showRightUI.
-   Подсветка работает — фокус на фоне .contacts-left.
-*/
+/* static/js/contacts.js — Контакты: города, фото, телефон*/
 
 document.addEventListener('DOMContentLoaded', () => {
   const scope        = document.querySelector('.dropdown-section[data-key="0"]');
@@ -27,6 +23,12 @@ document.addEventListener('DOMContentLoaded', () => {
   const cityContacts = scope.querySelector('#city-contacts');
   const rightCol     = scope.querySelector('.contacts-right-col');
   const combined     = scope.querySelector('.contacts-combined');
+
+  // Элементы формы обратной связи (toggle)
+  const openBtn   = scope.querySelector('#feedback-open-btn');
+  const formPanel = scope.querySelector('#feedback-form');                  // overlay-панель
+  const closeBtn  = formPanel ? formPanel.querySelector('.form-close') : null; // крестик внутри панели
+  let lastFocus   = null;
 
   // Данные городов (без изменений)
   const citiesData = {
@@ -98,7 +100,6 @@ document.addEventListener('DOMContentLoaded', () => {
         sectionBg[key] = bgUrl ? bgUrl.replace(/^url\(["']?/, '').replace(/["']?\)$/, '') : `/static/images/contacts/words/word-${key === 'project' ? 2 : key === 'montage' ? 3 : 4}.jpg`;
       }
     });
-    console.log('Extracted sectionBg:', sectionBg); // Отладка: проверьте в Console
     return sectionBg;
   };
   const sectionBg = getSectionBg(); // Инициализируем
@@ -108,10 +109,6 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!header) return;
     header.querySelectorAll('.mini-link').forEach(b => b.classList.remove('is-active'));
     header.querySelector(`.mini-link[data-section="${key}"]`)?.classList.add('is-active');
-  };
-  const clearMiniActive = () => {
-    if (!header) return;
-    header.querySelectorAll('.mini-link').forEach(b => b.classList.remove('is-active'));
   };
 
   // Утилиты (hideRightUI без изменений)
@@ -150,15 +147,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (isSection && whichSection && leftCol) {
       const bg = sectionBg[whichSection] || '';
-      console.log(`Setting background for ${whichSection}: ${bg}`); // Отладка: путь в Console
       leftCol.style.backgroundImage = bg ? `url("${bg}")` : '';
       leftCol.style.backgroundPosition = 'center';
       leftCol.style.backgroundSize = 'cover';
       leftCol.style.backgroundRepeat = 'no-repeat';
-      leftCol.style.opacity = '1'; // Принудительно показать
-      leftCol.style.zIndex = '1'; // Выше overlay
+      leftCol.style.opacity = '1';
+      leftCol.style.zIndex = '1';
       if (cityPhoto) cityPhoto.style.display = 'none';
-      console.log('leftCol styles after set:', getComputedStyle(leftCol).backgroundImage); // Отладка: реальный стиль
     }
 
     if (combined) combined.classList.add('city-selected');
@@ -183,8 +178,49 @@ document.addEventListener('DOMContentLoaded', () => {
     clearLeftNavigation();
     if (leftCol) leftCol.classList.remove('left-dark');
     setRightDark();
-    clearMiniActive();
+    setMiniActive("uzel");
   };
+
+  // ====== FEEDBACK: чистые функции без дубликатов ======
+  const openFeedback = () => {
+    if (!formPanel) return;
+    lastFocus = document.activeElement;
+    formPanel.style.display = 'flex';
+    if (backBtn) backBtn.style.display = 'none';
+    const firstField = formPanel.querySelector('#email') || formPanel.querySelector('input, textarea, select, button, [tabindex]:not([tabindex="-1"])');
+    if (firstField) firstField.focus({ preventScroll: true });
+  };
+
+  const closeFeedback = () => {
+    if (!formPanel) return;
+    formPanel.style.display = 'none';
+    if (backBtn) backBtn.style.display = '';
+    formPanel.querySelectorAll('input, textarea, select').forEach(el => { el.value = ''; });
+    if (lastFocus && typeof lastFocus.focus === 'function') {
+      lastFocus.focus({ preventScroll: true });
+    }
+  };
+
+  if (openBtn && formPanel) {
+    openBtn.addEventListener('click', openFeedback);
+  }
+  if (closeBtn && formPanel) {
+    closeBtn.addEventListener('click', closeFeedback);
+  }
+  if (formPanel) {
+    // Закрытие по клику на overlay (вне формы)
+    formPanel.addEventListener('click', (e) => {
+      if (e.target === formPanel) closeFeedback();
+    });
+    // Закрытие по Esc внутри панели
+    formPanel.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        e.preventDefault();
+        closeFeedback();
+      }
+    });
+  }
+  // ================================================
 
   // Инициализация (без изменений)
   hideRightUI();
@@ -210,13 +246,12 @@ document.addEventListener('DOMContentLoaded', () => {
     if (e.target.closest('.contacts-tiles .tile')) e.preventDefault();
   }, { capture: true, passive: false });
 
-  // 2) Из плиток к секциям (без изменений, кроме лога)
+  // 2) Из плиток к секциям (без изменений)
   if (tilesHost) {
     tilesHost.addEventListener('click', e => {
       const btn = e.target.closest('.tile');
       if (!btn) return;
       const key = btn.dataset.tile;
-      console.log('Clicked tile key:', key); // Отладка: какой key
 
       if (key === 'uzel') {
         hideRightUI();
@@ -256,7 +291,7 @@ document.addEventListener('DOMContentLoaded', () => {
           locationPage.hidden = false;
 
           clearLeftNavigation();
-          showRightUI(true, key); // ← Здесь фон + лог
+          showRightUI(true, key);
 
           requestAnimationFrame(() => {
             locationPage.classList.add('active');
@@ -316,7 +351,7 @@ document.addEventListener('DOMContentLoaded', () => {
       currentCountryKey = countryKey;
       isSectionMode = false;
       scope.classList.remove('project-selected');
-      clearMiniActive();
+      setMiniActive("uzel");
 
       if (title) title.textContent = 'ВЫБЕРИТЕ ГОРОД';
       countries.innerHTML = citiesData[countryKey]
@@ -361,7 +396,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
           backBtn.hidden = true;
 
-          clearMiniActive();
+          if (header) header.querySelectorAll(".mini-link").forEach(b => b.classList.remove("is-active"));
           hideRightUI();
           if (leftCol) {
             leftCol.classList.remove('left-dark');
@@ -407,7 +442,7 @@ document.addEventListener('DOMContentLoaded', () => {
         backBtn.hidden = true;
 
         showLeftNavigation(false);
-        clearMiniActive();
+        if (header) header.querySelectorAll(".mini-link").forEach(b => b.classList.remove("is-active"));
         hideRightUI();
         if (leftCol) leftCol.classList.remove('left-dark');
         clearRightMap();
