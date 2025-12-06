@@ -1,7 +1,7 @@
 /*  home.css*/
 .video-section {
   position: relative;
-  width: 100vw;
+  width: 100%;
 
   /* высота секции = 95% вьюпорта (показываем 5% следующей) */
   height: calc(100vh - 5vh);    /* fallback */
@@ -15,7 +15,7 @@
 
 body.nav-open .video-section {
   filter: blur(6px);
-  transition: var(–transition-medium);
+  transition: var(--transition-medium);
 }
 
 /* Убираем прежний «peek» через отрицательный отступ */
@@ -96,7 +96,7 @@ html { scroll-padding-top: var(--header-h, 0px); }
 body.footer-visible #fourth-section .video-caption {
   opacity: 0;
   transform: translate(-50%, 10px);
-  transition: opacity var(–transition-medium), transform var(–transition-medium);
+  transition: opacity var(–transition-medium), transform var(--transition-medium);
   pointer-events: none;
 }
 .video-footer.shown { display: block; opacity: 1; transform: translateY(0); }

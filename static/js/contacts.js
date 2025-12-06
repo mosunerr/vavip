@@ -1,8 +1,18 @@
 /* static/js/contacts.js — Контакты: города, фото, телефон*/
 
 document.addEventListener('DOMContentLoaded', () => {
-  const scope        = document.querySelector('.dropdown-section[data-key="0"]');
+  const scope = document.querySelector('.dropdown-section[data-key="0"]');
   if (!scope) return;
+
+  const mainPanel = document.getElementById('menu-panel');
+
+  const lockPanelAutoClose = () => {
+    if (mainPanel) mainPanel.classList.add('lock-auto-close');
+  };
+
+  const unlockPanelAutoClose = () => {
+    if (mainPanel) mainPanel.classList.remove('lock-auto-close');
+  };
 
   // Левая колонка / навигация
   const leftCol      = scope.querySelector('.contacts-left');
@@ -30,7 +40,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const closeBtn  = formPanel ? formPanel.querySelector('.form-close') : null; // крестик внутри панели
   let lastFocus   = null;
 
-  // Данные городов (без изменений)
+  // Данные городов
   const citiesData = {
     ru: ['МОСКВА', 'САНКТ-ПЕТЕРБУРГ', 'КРАСНОДАР', 'РОСТОВ-НА-ДОНУ', 'ВОРОНЕЖ', 'САМАРА'],
     by: ['МИНСК'],
@@ -55,7 +65,7 @@ document.addEventListener('DOMContentLoaded', () => {
     'ВОРОНЕЖ': 'voronezh'
   };
 
-  // Карты стран (без изменений)
+  // Карты стран
   const mapByCountry = {
     ae: '/static/images/contacts/maps/map-ae.jpg',
     by: '/static/images/contacts/maps/map-by.jpg',
@@ -90,28 +100,30 @@ document.addEventListener('DOMContentLoaded', () => {
   // Исходный HTML списка стран
   const initialCountriesHTML = countries ? countries.innerHTML : '';
 
-  // Динамические пути к фото: извлекаем из --tile-img-1 плиток (из HTML url_for)
+  // Динамические пути к фото: извлекаем из --tile-img-1 плиток
   const getSectionBg = () => {
     const sectionBg = {};
     tilesHost?.querySelectorAll('.tile').forEach(tile => {
       const key = tile.dataset.tile;
       if (['project', 'montage', 'shop'].includes(key)) {
         const bgUrl = getComputedStyle(tile).getPropertyValue('--tile-img-1').trim();
-        sectionBg[key] = bgUrl ? bgUrl.replace(/^url\(["']?/, '').replace(/["']?\)$/, '') : `/static/images/contacts/words/word-${key === 'project' ? 2 : key === 'montage' ? 3 : 4}.jpg`;
+        sectionBg[key] = bgUrl
+          ? bgUrl.replace(/^url\(["']?/, '').replace(/["']?\)$/, '')
+          : `/static/images/contacts/words/word-${key === 'project' ? 2 : key === 'montage' ? 3 : 4}.jpg`;
       }
     });
     return sectionBg;
   };
-  const sectionBg = getSectionBg(); // Инициализируем
+  const sectionBg = getSectionBg();
 
-  // Подсветка мини-шапки (без изменений, работает)
+  // Подсветка мини-шапки
   const setMiniActive = (key) => {
     if (!header) return;
     header.querySelectorAll('.mini-link').forEach(b => b.classList.remove('is-active'));
     header.querySelector(`.mini-link[data-section="${key}"]`)?.classList.add('is-active');
   };
 
-  // Утилиты (hideRightUI без изменений)
+  // Утилиты
   const hideRightUI = () => {
     if (basics)      basics.hidden = true;
     if (actionsRow)  actionsRow.hidden = true;
@@ -128,6 +140,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (title)     title.hidden = true;
     if (countries) countries.hidden = true;
   };
+
   const showLeftNavigation = (isCities = false) => {
     if (title) {
       title.hidden = false;
@@ -139,13 +152,16 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   };
 
-  // Показ правой панели: ключевой фикс — принудительный стиль для фона + лог
+  // Показ правой панели
   const showRightUI = (isSection = false, whichSection = null) => {
     if (basics)      basics.hidden = false;
     if (actionsRow)  actionsRow.hidden = false;
     if (cityInfo)    cityInfo.hidden = false;
 
     if (isSection && whichSection && leftCol) {
+      // убираем тёмный оверлей от "Узла ввода"
+      leftCol.classList.remove('left-dark');
+
       const bg = sectionBg[whichSection] || '';
       leftCol.style.backgroundImage = bg ? `url("${bg}")` : '';
       leftCol.style.backgroundPosition = 'center';
@@ -160,7 +176,7 @@ document.addEventListener('DOMContentLoaded', () => {
     setRightDark();
   };
 
-  // Показ города (без изменений)
+  // Показ города
   const showRightUIForCity = (cityKey, cityText) => {
     if (basics)      basics.hidden = false;
     if (actionsRow)  actionsRow.hidden = false;
@@ -181,13 +197,15 @@ document.addEventListener('DOMContentLoaded', () => {
     setMiniActive("uzel");
   };
 
-  // ====== FEEDBACK: чистые функции без дубликатов ======
+  // ====== FEEDBACK ======
   const openFeedback = () => {
     if (!formPanel) return;
     lastFocus = document.activeElement;
     formPanel.style.display = 'flex';
     if (backBtn) backBtn.style.display = 'none';
-    const firstField = formPanel.querySelector('#email') || formPanel.querySelector('input, textarea, select, button, [tabindex]:not([tabindex="-1"])');
+    const firstField =
+      formPanel.querySelector('#email') ||
+      formPanel.querySelector('input, textarea, select, button, [tabindex]:not([tabindex="-1"])');
     if (firstField) firstField.focus({ preventScroll: true });
   };
 
@@ -208,11 +226,9 @@ document.addEventListener('DOMContentLoaded', () => {
     closeBtn.addEventListener('click', closeFeedback);
   }
   if (formPanel) {
-    // Закрытие по клику на overlay (вне формы)
     formPanel.addEventListener('click', (e) => {
       if (e.target === formPanel) closeFeedback();
     });
-    // Закрытие по Esc внутри панели
     formPanel.addEventListener('keydown', (e) => {
       if (e.key === 'Escape') {
         e.preventDefault();
@@ -222,12 +238,12 @@ document.addEventListener('DOMContentLoaded', () => {
   }
   // ================================================
 
-  // Инициализация (без изменений)
+  // Инициализация
   hideRightUI();
   if (leftCol) leftCol.classList.remove('left-dark');
   clearRightMap();
 
-  // 1) Плитки: отключение переходов (без изменений)
+  // 1) Плитки: отключение переходов
   if (tilesHost) {
     tilesHost.querySelectorAll('.tile').forEach(tile => {
       if (tile.tagName === 'A' && tile.hasAttribute('href')) {
@@ -238,15 +254,17 @@ document.addEventListener('DOMContentLoaded', () => {
       tile.setAttribute('tabindex', '0');
     });
   }
+
   document.addEventListener('click', e => {
     if (e.target.closest('.contacts-tiles .tile')) e.preventDefault();
   }, { capture: true, passive: false });
+
   document.addEventListener('keydown', e => {
     if (!['Enter', ' ', 'Spacebar'].includes(e.key)) return;
     if (e.target.closest('.contacts-tiles .tile')) e.preventDefault();
   }, { capture: true, passive: false });
 
-  // 2) Из плиток к секциям (без изменений)
+  // 2) Из плиток к секциям
   if (tilesHost) {
     tilesHost.addEventListener('click', e => {
       const btn = e.target.closest('.tile');
@@ -263,6 +281,8 @@ document.addEventListener('DOMContentLoaded', () => {
         setTimeout(() => {
           tilesGrid.hidden = true;
           locationPage.hidden = false;
+          lockPanelAutoClose();           // ← блокируем авто-закрытие
+
           requestAnimationFrame(() => {
             locationPage.classList.add('active');
             if (header) {
@@ -289,6 +309,7 @@ document.addEventListener('DOMContentLoaded', () => {
         setTimeout(() => {
           tilesGrid.hidden = true;
           locationPage.hidden = false;
+          lockPanelAutoClose();           // ← блокируем авто-закрытие
 
           clearLeftNavigation();
           showRightUI(true, key);
@@ -304,7 +325,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // 2.1) Мини‑шапка: клик/Enter/Space → инициируем клик по соответствующей плитке (узел/проект/монтаж/магазин)
+  // 2.1) Мини‑шапка → клик по плитке
   if (header && tilesHost) {
     header.addEventListener('click', (e) => {
       const btn = e.target.closest('.mini-link');
@@ -327,7 +348,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // 3-5) Страны/города/назад (без изменений, но сброс фона)
+  // 3-5) Страны/города/назад
   if (countries) {
     countries.addEventListener('click', e => {
       const btn = e.target.closest('.country-link:not(.city-link)');
@@ -339,11 +360,11 @@ document.addEventListener('DOMContentLoaded', () => {
       if (!countryKey) {
         const text = li.textContent.trim().toUpperCase();
         switch (text) {
-          case 'РОССИЯ': countryKey = 'ru'; break;
+          case 'РОССИЯ':   countryKey = 'ru'; break;
           case 'БЕЛАРУСЬ': countryKey = 'by'; break;
           case 'КАЗАХСТАН': countryKey = 'kz'; break;
-          case 'ГРУЗИЯ': countryKey = 'ge'; break;
-          case 'ОАЭ': countryKey = 'ae'; break;
+          case 'ГРУЗИЯ':   countryKey = 'ge'; break;
+          case 'ОАЭ':      countryKey = 'ae'; break;
         }
       }
       if (!countryKey || !citiesData[countryKey]) return;
@@ -440,6 +461,7 @@ document.addEventListener('DOMContentLoaded', () => {
         tilesGrid.style.pointerEvents = 'auto';
 
         backBtn.hidden = true;
+        unlockPanelAutoClose();   // ← снимаем блокировку, вернулись к плиткам
 
         showLeftNavigation(false);
         if (header) header.querySelectorAll(".mini-link").forEach(b => b.classList.remove("is-active"));
@@ -451,7 +473,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // 6) Фон для плиток (без изменений)
+  // 6) Фон для плиток
   const BG = [
     '/static/images/contacts/words/word-1.jpg',
     '/static/images/contacts/words/word-2.jpg',

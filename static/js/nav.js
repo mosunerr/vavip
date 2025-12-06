@@ -54,6 +54,10 @@ document.addEventListener('DOMContentLoaded', () => {
   const sections = Array.from(document.querySelectorAll('.dropdown-section'));
   if (!panel || !buttons.length || !sections.length) return;
 
+  const AUTOLOCK_CLASS = 'lock-auto-close';
+  const isPanelLocked = () => panel.classList.contains(AUTOLOCK_CLASS);
+
+
   let openKey = null;
   let closeTimer = null;
   let handoffTimer = null;      // «мостик» при уходе ВНИЗ в панель
@@ -126,6 +130,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function scheduleClose(delay = GRACE_CLOSE_MS){
+    if (isPanelLocked()) return;          // если панель залочена — не закрываем
     clearTimeout(closeTimer);
     closeTimer = setTimeout(closePanelNow, delay);
   }
@@ -230,15 +235,19 @@ buttons.forEach(btn => {
 
   // Закрытие по завершению прокрутки + фолбэк
   if ('onscrollend' in document) {
-    document.addEventListener('scrollend', () => { if (openKey !== null) closePanelNow(); }, { passive: true });
+    document.addEventListener('scrollend', () => {
+      if (openKey === null || isPanelLocked()) return;
+      closePanelNow();
+    }, { passive: true });
   } else {
     let scrollCloseT;
     window.addEventListener('scroll', () => {
-      if (openKey === null) return;
+      if (openKey === null || isPanelLocked()) return;
       clearTimeout(scrollCloseT);
       scrollCloseT = setTimeout(() => closePanelNow(), 200);
     }, { passive: true });
   }
+
 
   // Наблюдаем за изменением размеров шапки
   const headerEl = document.querySelector('header');
