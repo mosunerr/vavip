@@ -451,9 +451,7 @@
 /* Кнопка "Назад" по центру снизу левого блока */
 .contacts-left .back-to-countries {
   position: absolute;
-  left: 60%;
-  bottom: 64px;
-  transform: translateX(-50%);
+left: 50%;top: 200px;  transform: translate(-50%, -50%);
   z-index: 21;
   width: 220px;
   height: 64px;
